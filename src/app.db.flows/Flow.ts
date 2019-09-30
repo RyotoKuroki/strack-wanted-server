@@ -12,6 +12,9 @@ export default class Flow {
         console.log(`accessor created`);
         return {};
     }
+    public async BeginTransaction() {
+        this._Accessor.BeginTransaction();
+    }
     public async Commit() {
         this._Accessor.CommitTransaction();
     }
@@ -19,6 +22,6 @@ export default class Flow {
         this._Accessor.RollbackTransaction();
     }
     public async Release() {
-        this._Accessor.Release();
+        return this._Accessor.Release();
     }
 }
