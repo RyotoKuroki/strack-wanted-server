@@ -6,4 +6,5 @@ export default interface ITR_Wanted extends ITR_Base {
     //image: Blob;
     image_base64: string;
     warning: string;
+    done: string;
 }

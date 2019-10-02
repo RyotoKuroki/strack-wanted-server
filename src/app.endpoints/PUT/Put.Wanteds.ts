@@ -15,10 +15,17 @@ export default class PutWanteds {
         const flow = new Flow();
         flow.Run([TrWanted])
         .then(async (result: any) => {
+            console.log(`begin tran`);
             await flow.BeginTransaction();
             return result;
         })
         .then(async (result) => {
+            console.log(`find one : uuid= ${dtoWanted.uuid}, revision= ${dtoWanted.revision}`);
+            if(dtoWanted.uuid === ''){
+                result.target = dtoWanted;
+                return result;
+            }
+            
             const target = await TrWanted.findOne({
                 where: {
                     //whois: wanted.whois
@@ -33,6 +40,7 @@ export default class PutWanteds {
             return result;
         })
         .then(async (result: any) => {
+            console.log(`upd start`);
             // release connection.
             const target: TrWanted = result.target;
             target.uuid = (!target.uuid || target.uuid === '') ? (`${uuid.v4()}-${Date.now()}`) : target.uuid;
@@ -40,8 +48,11 @@ export default class PutWanteds {
             target.name = dtoWanted.name;
             target.prize_money = dtoWanted.prize_money;
             target.warning = dtoWanted.warning;
+            target.done = dtoWanted.done;
             target.revision = ++target.revision;
+            console.log(`save target in put : ${JSON.stringify(target)}`);
             await TrWanted.save(target);
+            // await target.save();
             return result;
         })
         .then(async (result: any) => {
