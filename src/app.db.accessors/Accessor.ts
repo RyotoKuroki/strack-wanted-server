@@ -1,6 +1,4 @@
 import { /*getConnectionOptions,*/ createConnection, /*BaseEntity,*/ Connection, QueryRunner } from 'typeorm';
-// import { TrAffair } from '../entity/TrAffair';
-// import { TrAffairTimePlace } from '../entity/TrAffairTimePlace';
 import TrWanted from '../app.db.entities/TrWanted';
 
 export default class Accessor {

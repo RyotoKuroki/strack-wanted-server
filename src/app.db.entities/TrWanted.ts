@@ -1,9 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm'
-// import ITR_Base from '../../app.table.interfaces/ITR_Base';
-// import ITR_Wanted from '../../app.db.interfaces/ITR_Wanted';
+import ITR_Wanted from 'strack-wanted-meta/src/entities/ITR_Wanted';
 
 @Entity()
-export default class TrWanted extends BaseEntity/* implements ITR_Wanted */{
+export default class TrWanted extends BaseEntity implements ITR_Wanted {
     /**
      * サロゲートキー
      */

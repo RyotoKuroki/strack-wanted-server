@@ -1,4 +1,3 @@
-// const cors = require('cors')({Origin: true});
 import Flow from '../app.db.flows/Flow';
 import TrWanted from '../app.db.entities/TrWanted';
 

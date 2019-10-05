@@ -1,5 +1,5 @@
-import Accessor from '../app.db.accessors/Accessor';
 import { createConnection, BaseEntity, Connection, QueryRunner } from 'typeorm';
+import Accessor from '../app.db.accessors/Accessor';
 
 export default class Flow {
 
