@@ -14,15 +14,8 @@ export default class WantedsUpsert {
             await flow.BeginTransaction();
             return result;
         })
-        .then(async (result) => {
-            // console.log(`find one : uuid= ${dtoWanted.uuid}, revision= ${dtoWanted.revision}`);
-            if(dtoWanted.uuid === ''){
-                // for add new-row
-                result.target = dtoWanted;
-                return result;
-            }
-            // for modify
-            const modify = await TrWanted.findOne({
+        .then(async (result: any) => {
+            const target = await TrWanted.findOne({
                 where: {
                     //whois: wanted.whois
                     uuid: dtoWanted.uuid,
@@ -30,17 +23,16 @@ export default class WantedsUpsert {
                 }
             });
             // 該当の UUID、バージョン の情報が存在しない場合は排他エラー
-            if(!modify)
+            if(!target)
                 throw new Error(`排他エラー`);
-            result.target = modify;
+            result.target = target;
             return result;
         })
         .then(async (result: any) => {
             const target: TrWanted = result.target;
-            target.done = 'done';
+            target.done = dtoWanted.done;
             target.revision = ++target.revision;
-            const pathced = await TrWanted.save(target);
-            console.log(`patched : ${JSON.stringify(pathced)}`);
+            await TrWanted.save(target);
             return result;
         })
         .then(async (result: any) => {
@@ -54,7 +46,7 @@ export default class WantedsUpsert {
                 wanteds: [result.target]
             }));
         })
-        .catch(async (error) => {
+        .catch(async (error: any) => {
             console.log(`error catch : ${JSON.stringify(error)}`);
             await flow.Release();
             throw new Error(JSON.stringify({

@@ -7,8 +7,7 @@ export default class WantedsGet {
         
         const flow = new Flow();
         flow.Run([TrWanted])
-        .then(async (result) => {
-            // callback at connection created.
+        .then(async (result: any) => {
             const wanteds = await TrWanted.find({
                 where: {
                     enabled: 'enable'
@@ -17,20 +16,15 @@ export default class WantedsGet {
             result.wanteds = wanteds;
             return result;
         })
-        .then((result: any) => {
-            // release connection.
+        .then(async (result: any) => {
             flow.Release();
-            return result;
-        })
-        .then((result: any) => {
-            // response
             return res.send(JSON.stringify({
                 success: true,
                 wanteds: result.wanteds
             }));
         })
-        .catch(error => {
-            // response on error
+        .catch(async (error: any) => {
+            flow.Release();
             throw new Error(JSON.stringify({
                 success: false
             }));

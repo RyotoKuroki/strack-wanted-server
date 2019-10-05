@@ -10,13 +10,12 @@ export default class WantedsDelete {
         const dtoWanted: TrWanted = params.wanteds[0];
         const flow = new Flow();
         flow.Run([TrWanted])
-        .then(async (result) => {
-            // console.log(`find one : uuid= ${dtoWanted.uuid}, revision= ${dtoWanted.revision}`);
+        .then(async (result: any) => {
             if(dtoWanted.uuid === '')
                 throw new Error('削除対象データがありません');
             return result;
         })
-        .then(async (result) => {
+        .then(async (result: any) => {
             await flow.BeginTransaction();
             return result;
         })
@@ -52,7 +51,7 @@ export default class WantedsDelete {
                 wanteds: [result.target]
             }));
         })
-        .catch(async (error) => {
+        .catch(async (error: any) => {
             await flow.Release();
             throw new Error(JSON.stringify({
                 success: false,

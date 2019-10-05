@@ -14,8 +14,7 @@ export default class WantedsUpsert {
             await flow.BeginTransaction();
             return result;
         })
-        .then(async (result) => {
-            // console.log(`find one : uuid= ${dtoWanted.uuid}, revision= ${dtoWanted.revision}`);
+        .then(async (result: any) => {
             if(dtoWanted.uuid === ''){
                 // for add new-row
                 result.target = dtoWanted;
@@ -29,7 +28,6 @@ export default class WantedsUpsert {
                     revision: dtoWanted.revision
                 }
             });
-            console.log(`mod : ${JSON.stringify(modify)}`);
             // 該当の UUID、バージョン の情報が存在しない場合は排他エラー
             if(!modify)
                 throw new Error(`排他エラー`);
@@ -59,7 +57,7 @@ export default class WantedsUpsert {
                 wanteds: [result.target]
             }));
         })
-        .catch(async (error) => {
+        .catch(async (error: any) => {
             await flow.Release();
             throw new Error(JSON.stringify({
                 success: false,
