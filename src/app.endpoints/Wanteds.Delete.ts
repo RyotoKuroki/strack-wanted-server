@@ -1,31 +1,27 @@
 // const cors = require('cors')({Origin: true});
-import Flow from '../../app.db.flows/Flow';
-import TrWanted from '../../app.db.entities/TrWanted';
+import Flow from '../app.db.flows/Flow';
+import TrWanted from '../app.db.entities/TrWanted';
 import uuid from 'node-uuid';
 
-export default class PutWanteds {
+export default class WantedsDelete {
 
-    // PUT/wanteds
-    public async PutWanteds(req, res, next) {
+    public async Delete(req, res, next) {
         
-        console.log(`put begin`);
-
         const params = req.body;
         const dtoWanted: TrWanted = params.wanteds[0];
         const flow = new Flow();
         flow.Run([TrWanted])
-        .then(async (result: any) => {
-            console.log(`begin tran`);
-            await flow.BeginTransaction();
+        .then(async (result) => {
+            // console.log(`find one : uuid= ${dtoWanted.uuid}, revision= ${dtoWanted.revision}`);
+            if(dtoWanted.uuid === '')
+                throw new Error('削除対象データがありません');
             return result;
         })
         .then(async (result) => {
-            console.log(`find one : uuid= ${dtoWanted.uuid}, revision= ${dtoWanted.revision}`);
-            if(dtoWanted.uuid === ''){
-                result.target = dtoWanted;
-                return result;
-            }
-            
+            await flow.BeginTransaction();
+            return result;
+        })
+        .then(async (result: any) => {
             const target = await TrWanted.findOne({
                 where: {
                     //whois: wanted.whois
@@ -40,38 +36,28 @@ export default class PutWanteds {
             return result;
         })
         .then(async (result: any) => {
-            console.log(`upd start`);
-            // release connection.
             const target: TrWanted = result.target;
-            target.uuid = (!target.uuid || target.uuid === '') ? (`${uuid.v4()}-${Date.now()}`) : target.uuid;
-            target.image_base64 = dtoWanted.image_base64;
-            target.name = dtoWanted.name;
-            target.prize_money = dtoWanted.prize_money;
-            target.warning = dtoWanted.warning;
-            target.done = dtoWanted.done;
+            target.enabled = 'disable';
             target.revision = ++target.revision;
-            console.log(`save target in put : ${JSON.stringify(target)}`);
             await TrWanted.save(target);
-            // await target.save();
             return result;
         })
         .then(async (result: any) => {
-            // release connection.
-            console.log(`commit`);
             await flow.Commit();
-            await flow.Release();
             return result;
         })
-        .then((result: any) => {
-            // response
+        .then(async (result: any) => {
+            await flow.Release();
             return res.send(JSON.stringify({
                 success: true,
                 wanteds: [result.target]
             }));
         })
-        .catch(error => {
+        .catch(async (error) => {
+            await flow.Release();
             throw new Error(JSON.stringify({
-                success: false
+                success: false,
+                reason: error
             }));
         });
     }

@@ -1,19 +1,23 @@
 import express from 'express';
-import GetWanteds from './app.endpoints/GET/Get.Wanteds';
-import PostWanteds from './app.endpoints/POST/Post.Wanteds';
-import PutWanteds from './app.endpoints/PUT/Put.Wanteds';
+import WantedsGet from './app.endpoints/Wanteds.Get';
+import WantedsDelete from './app.endpoints/Wanteds.Delete';
+import WantedsUpsert from './app.endpoints/Wanteds.Upsert';
+import WantedsDone from './app.endpoints/Wanteds.Done';
 
 const cors = require('cors')({Origin: true});
 const router = express.Router();
 
-router.get('/GET/wanteds', (req, res, next) => {
-    cors(req, res, () => new GetWanteds().GetWanteds(req, res, next));
+router.post('/get-wanteds', (req, res, next) => {
+    cors(req, res, () => new WantedsGet().Get(req, res, next));
 });
-router.post('/POST/wanteds', (req, res, next) => {
-    cors(req, res, () => new PostWanteds().PostWanteds(req, res, next));
+router.post('/upsert-wanteds', (req, res, next) => {
+    cors(req, res, () => new WantedsUpsert().Save(req, res, next));
 });
-router.post('/PUT/wanteds', (req, res, next) => {
-    cors(req, res, () => new PutWanteds().PutWanteds(req, res, next));
+router.post('/done-wanteds', (req, res, next) => {
+    cors(req, res, () => new WantedsDone().Save(req, res, next));
+});
+router.post('/delete-wanteds', (req, res, next) => {
+    cors(req, res, () => new WantedsDelete().Delete(req, res, next));
 });
 
 
@@ -23,16 +27,6 @@ router.get('/', (req, res, next) => {
         // return res.send('Hello rest-world!');
         return res.json({
             success: true
-        });
-    });
-});
-
-router.all('/all', (req, res, next) => {
-    cors(req, res, () => {
-        // return res.send('Hello rest-world!');
-        return res.json({
-            success: true,
-            all: 'yes'
         });
     });
 });

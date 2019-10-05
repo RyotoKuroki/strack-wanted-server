@@ -1,6 +1,7 @@
 import { createConnection, BaseEntity } from 'typeorm';
-import TrWanted from './src/db.entities/TrWanted';
+import TrWanted from './app.db.entities/TrWanted';
 
+// ORM - TEST
 createConnection({
     type: "mysql",
  /* extra: { socketPath: '/cloudsql/appo-ja:asia-east1:strack-wanted-rdb' }, */
@@ -15,10 +16,10 @@ createConnection({
     // save-test
     const hoge = new TrWanted();
     hoge.uuid = Date.now()+'';
-    hoge.whois = hoge.uuid;
+    hoge.whois = 'ORM - TEST';
     hoge.name = hoge.uuid;
     hoge.prize_money = 1;
-    hoge.image = '';
+    hoge.image_base64 = '';
     hoge.warning = 'wa----n!';
     hoge.revision = 0;
     await hoge.save();

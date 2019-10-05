@@ -15,6 +15,12 @@ export default class TrWanted extends BaseEntity/* implements ITR_Wanted */{
     @Column({ length: 256 })
     public whois: string = '';
     /**
+     * 情報の利用可否
+     * enable/disable
+     */
+    @Column({ length: 256 })
+    public enabled: string = 'enable';
+    /**
      * バージョン
      */
     @Column('double')
@@ -41,6 +47,7 @@ export default class TrWanted extends BaseEntity/* implements ITR_Wanted */{
     public warning: string = '';
     /**
      * 確保済み！
+     * ''/done
      */
     @Column({ length: 256 })
     public done: string = '';

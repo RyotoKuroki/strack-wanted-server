@@ -1,27 +1,20 @@
 // const cors = require('cors')({Origin: true});
-import Flow from '../../app.db.flows/Flow';
-import TrWanted from '../../app.db.entities/TrWanted';
+import Flow from '../app.db.flows/Flow';
+import TrWanted from '../app.db.entities/TrWanted';
 
-export default class PostWanteds {
+export default class WantedsGet {
 
-    // POST/wanteds
-    public async PostWanteds(req, res, next) {
-
-        console.log(`post begin`);
-
-        // console.log(`(POST) params : ${JSON.stringify(req.body.wanteds)}`);
-        const wanted: TrWanted = req.body.wanteds[0];
-        console.log(`name : ${wanted.name}`);
-        console.log(`prize : ${wanted.prize_money}`);
-        console.log(`warn : ${wanted.warning}`);
+    public async Get(req, res, next) {
         
-        /*
         const flow = new Flow();
-        
         flow.Run([TrWanted])
         .then(async (result) => {
             // callback at connection created.
-            const wanteds = await TrWanted.find();
+            const wanteds = await TrWanted.find({
+                where: {
+                    enabled: 'enable'
+                }
+            });
             result.wanteds = wanteds;
             return result;
         })
@@ -32,7 +25,7 @@ export default class PostWanteds {
         })
         .then((result: any) => {
             // response
-            res.send(JSON.stringify({
+            return res.send(JSON.stringify({
                 success: true,
                 wanteds: result.wanteds
             }));
@@ -43,6 +36,5 @@ export default class PostWanteds {
                 success: false
             }));
         });
-        */
     }
 }
