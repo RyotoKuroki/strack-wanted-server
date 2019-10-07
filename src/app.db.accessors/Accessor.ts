@@ -11,6 +11,7 @@ export default class Accessor {
     protected _QueryRunner!: QueryRunner;
     public get DbQueryRunner(): QueryRunner { return this._QueryRunner; }
 
+    /** DB接続設定情報を取得。適宜設定のこと！*/
     public GetConfig(schemas?: Array<any>): any {
         // スキーマ未設定の場合は全スキーマを設定しておくことにする。
         const ss = (schemas && schemas.length > 0) ? schemas : [
@@ -18,15 +19,16 @@ export default class Accessor {
         ];
         return {
             type: "mysql",
-            // extra: { socketPath: '/cloudsql/appo-ja:asia-east1:strack-wanted-rdb' },
-            host: "35.229.244.159",
-            port: 3306,
-            username: "strack-wanted-usr-jegphr45er5",
-            password: "strack-wanted-pswd-gao5erg51f3sdfa",
-            database: "strack_rdb_6grga3waee4",
+            // extra: { socketPath: '/cloudsql/{YOUR_DATABASE_PATH}' },
+            host: "{YOUR_DATABASE_IP_ADDRESS}",
+            port: {YOUR_DATABASE_PORT},
+            username: "{USER_NAME}",
+            password: "{PASSWORD}",
+            database: "{DATABASE_NAME}",
             entities: ss
         };
     }
+    /** コネクション生成 */
     public async CreateConnection(config: any): Promise<any> {
 
         console.log(`accessor connecting`);
@@ -41,22 +43,27 @@ export default class Accessor {
         console.log(`accessor run`);
         return this;
     }
+    /** トランザクションスタート */
     public async BeginTransaction(): Promise<any> {
         await this._QueryRunner.startTransaction();
         return true;
     }
+    /** 更新 */
     public async Upsert(entity: any): Promise<any> {
         await this._QueryRunner.manager.save(entity);
         return true;
     }
+    /** コミット */
     public async CommitTransaction(): Promise<any> {
         await this._QueryRunner.commitTransaction();
         return true;
     }
+    /** ロールバック */
     public async RollbackTransaction(): Promise<any> {
         await this._QueryRunner.rollbackTransaction();
         return true;
     }
+    /** 開放 */
     public async Release(): Promise<any> {
         if (this._QueryRunner.isTransactionActive)
             await this._QueryRunner.rollbackTransaction();
