@@ -13,15 +13,15 @@ export default class Flow {
         return {};
     }
     public async BeginTransaction() {
-        this._Accessor.BeginTransaction();
+        return await this._Accessor.BeginTransaction();
     }
     public async Commit() {
-        this._Accessor.CommitTransaction();
+        return await this._Accessor.CommitTransaction();
     }
     public async Rollback() {
-        this._Accessor.RollbackTransaction();
+        return await this._Accessor.RollbackTransaction();
     }
     public async Release() {
-        return this._Accessor.Release();
+        return await this._Accessor.Release();
     }
 }

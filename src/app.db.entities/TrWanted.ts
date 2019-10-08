@@ -9,7 +9,7 @@ export default class TrWanted extends BaseEntity implements ITR_Wanted {
     @PrimaryGeneratedColumn()
     public uuid: string = '';
     /**
-     * ユーザを表すユニークキー
+     * ユーザを表すキー
      */
     @Column({ length: 256 })
     public whois: string = '';
@@ -30,22 +30,22 @@ export default class TrWanted extends BaseEntity implements ITR_Wanted {
     @Column({ length: 256 })
     public name: string = '';
     /**
-     * 懸賞金
+     * ターゲット確保時の懸賞金
      */
     @Column('double')
     public prize_money: number = 0;
     /**
-     * 画像
+     * ターゲットの画像
      */
     @Column('longtext')
     public image_base64: string = '';
     /**
-     * 要注意情報！
+     * ターゲットに関する要注意情報！
      */
     @Column({ length: 256 })
     public warning: string = '';
     /**
-     * 確保済み！
+     * ターゲット確保済み！
      * ''/done
      */
     @Column({ length: 256 })
