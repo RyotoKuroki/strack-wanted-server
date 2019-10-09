@@ -1,12 +1,11 @@
-import { /*getConnectionOptions,*/ createConnection, /*BaseEntity,*/ Connection, QueryRunner } from 'typeorm';
+import { /*getConnectionOptions,*/SelectQueryBuilder, getRepository, BaseEntity, createConnections, createConnection,/* BaseEntity,*/ Connection, QueryRunner, Repository, EntityManager, QueryBuilder, getConnection } from 'typeorm';
 import TrWanted from '../app.db.entities/TrWanted';
+import uuid from 'node-uuid';
 
 export default class Accessor {
 
-    // connection
-    protected _Connection!: Connection;
-    public get DbConnection(): Connection { return this._Connection; }
-    
+    protected static _GlobalConnection: Connection;
+
     // queryrunner
     protected _QueryRunner!: QueryRunner;
     public get DbQueryRunner(): QueryRunner { return this._QueryRunner; }
@@ -31,46 +30,51 @@ export default class Accessor {
     /** コネクション生成 */
     public async CreateConnection(config: any): Promise<any> {
 
-        console.log(`accessor connecting`);
-        const conn = await createConnection(config);
-        this._Connection = conn;
+        if(Accessor._GlobalConnection === undefined || 
+           Accessor._GlobalConnection === null || 
+           Accessor._GlobalConnection.isConnected === false){
+            console.log(`accessor connecting`);
+            // const conn = await createConnection(config);
+            // const conns = await createConnections([config]);
+            // this._Connections = conns;
+            Accessor._GlobalConnection = await createConnection(config);
+            console.log(`accessor connected`);
+        }
 
-        console.log(`accessor connected`);
-        const queryRunner = conn.createQueryRunner();
-        await queryRunner.connect();
-        this._QueryRunner = queryRunner;
-
-        console.log(`accessor run`);
+        BaseEntity.useConnection(Accessor._GlobalConnection);
         return this;
     }
-    /** トランザクションスタート */
+    // 暫定コメントアウト！
+    /*
+    /** トランザクションスタート * /
     public async BeginTransaction(): Promise<any> {
         await this._QueryRunner.startTransaction();
         return true;
     }
-    /** 更新 */
+    /** 更新 * /
     public async Upsert(entity: any): Promise<any> {
         await this._QueryRunner.manager.save(entity);
         return true;
     }
-    /** コミット */
+    /** コミット * /
     public async CommitTransaction(): Promise<any> {
         await this._QueryRunner.commitTransaction();
         return true;
     }
-    /** ロールバック */
+    /** ロールバック * /
     public async RollbackTransaction(): Promise<any> {
         await this._QueryRunner.rollbackTransaction();
         return true;
     }
-    /** 開放 */
+    /** 開放 * /
     public async Release(): Promise<any> {
         if (this._QueryRunner.isTransactionActive)
             await this._QueryRunner.rollbackTransaction();
         if (this._QueryRunner)
             await this._QueryRunner.release();
-        if (this._Connection)
-            await this._Connection.close();
+        if (this.DbConnection)
+            await this.DbConnection.close();
         return true;
     }
+    */
 }

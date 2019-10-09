@@ -4,7 +4,7 @@ import TrWanted from '../app.db.entities/TrWanted';
 export default class WantedsGet {
 
     public async Get(req, res, next) {
-        
+
         const flow = new Flow();
         flow.Run([TrWanted])
         .then(async (result: any) => {
@@ -17,14 +17,14 @@ export default class WantedsGet {
             return result;
         })
         .then(async (result: any) => {
-            flow.Release();
+            // await flow.Release();
             return res.send(JSON.stringify({
                 success: true,
                 wanteds: result.wanteds
             }));
         })
         .catch(async (error: any) => {
-            flow.Release();
+            // await flow.Release();
             throw new Error(JSON.stringify({
                 success: false
             }));

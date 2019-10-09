@@ -3,6 +3,7 @@ import TrWanted from './app.db.entities/TrWanted';
 
 // ORM - TEST
 createConnection({
+    name: 'hogehoge',
     type: "mysql",
  /* extra: { socketPath: '/cloudsql/appo-ja:asia-east1:strack-wanted-rdb' }, */
     host: "35.229.244.159",

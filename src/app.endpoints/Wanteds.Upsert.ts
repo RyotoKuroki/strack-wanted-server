@@ -11,7 +11,7 @@ export default class WantedsUpsert {
         const flow = new Flow();
         flow.Run([TrWanted])
         .then(async (result: any) => {
-            await flow.BeginTransaction();
+            //await flow.BeginTransaction();
             return result;
         })
         .then(async (result: any) => {
@@ -47,18 +47,18 @@ export default class WantedsUpsert {
             return result;
         })
         .then(async (result: any) => {
-            await flow.Commit();
+            //await flow.Commit();
             return result;
         })
         .then(async (result: any) => {
-            await flow.Release();
+            //await flow.Release();
             return res.send(JSON.stringify({
                 success: true,
                 wanteds: [result.target]
             }));
         })
         .catch(async (error: any) => {
-            await flow.Release();
+            //await flow.Release();
             throw new Error(JSON.stringify({
                 success: false,
                 reason: error

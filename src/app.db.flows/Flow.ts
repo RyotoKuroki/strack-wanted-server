@@ -4,14 +4,16 @@ import Accessor from '../app.db.accessors/Accessor';
 export default class Flow {
 
     protected _Accessor!: Accessor;
+    public get Accessor(): Accessor { return this._Accessor; }
 
     public async Run(entities: Array<any>): Promise<any> {
         const accessor = new Accessor();
         const config = accessor.GetConfig(entities);
         this._Accessor = await accessor.CreateConnection(config);
-        console.log(`accessor created`);
         return {};
     }
+    // 暫定コメントアウト
+    /*
     public async BeginTransaction() {
         return await this._Accessor.BeginTransaction();
     }
@@ -24,4 +26,5 @@ export default class Flow {
     public async Release() {
         return await this._Accessor.Release();
     }
+    */
 }
