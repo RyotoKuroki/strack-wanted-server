@@ -1,0 +1,14 @@
+{
+    "appenders": {
+        "system": {
+            "type": "file",
+            "filename": "logs/system.log"
+        }
+    },
+    "categories": {
+        "default": {
+            "appenders": ["system"],
+            "level": "debug"
+        }
+    }
+}
