@@ -1,4 +1,4 @@
-import Flow from '../app.db.flows/Flow';
+import Flow from '../app.flows/Flow';
 import TrWanted from '../app.db.entities/TrWanted';
 import uuid from 'node-uuid';
 

@@ -1,6 +1,7 @@
 import { /*getConnectionOptions,*/SelectQueryBuilder, getRepository, BaseEntity, createConnections, createConnection,/* BaseEntity,*/ Connection, QueryRunner, Repository, EntityManager, QueryBuilder, getConnection } from 'typeorm';
 import TrWanted from '../app.db.entities/TrWanted';
 import uuid from 'node-uuid';
+import Logger from '../app.logger/Logger';
 
 export default class Accessor {
 
@@ -31,16 +32,11 @@ export default class Accessor {
     public async CreateConnection(config: any): Promise<any> {
 
         if(Accessor._GlobalConnection === undefined || 
-           Accessor._GlobalConnection === null || 
-           Accessor._GlobalConnection.isConnected === false){
-            console.log(`accessor connecting`);
-            // const conn = await createConnection(config);
-            // const conns = await createConnections([config]);
-            // this._Connections = conns;
+           Accessor._GlobalConnection === null){
             Accessor._GlobalConnection = await createConnection(config);
-            console.log(`accessor connected`);
+        } else if(Accessor._GlobalConnection.isConnected === false){
+            Accessor._GlobalConnection = await Accessor._GlobalConnection.connect();
         }
-
         BaseEntity.useConnection(Accessor._GlobalConnection);
         return this;
     }

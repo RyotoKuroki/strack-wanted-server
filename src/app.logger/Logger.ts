@@ -18,18 +18,23 @@ export default class Logger {
     }
 
     public static Fatal(msg: string) {
-        this._LogWriter.fatal(msg);
+        const writer = Logger.LogWriter;
+        writer.fatal(msg);
     }
     public static Error(msg: string) {
-        this._LogWriter.error(msg);
+        const writer = Logger.LogWriter;
+        writer.error(msg);
     }
     public static Warn(msg: string) {
-        this._LogWriter.warn(msg);
+        const writer = Logger.LogWriter;
+        writer.warn(msg);
     }
     public static Debug(msg: string) {
-        this._LogWriter.debug(msg);
+        const writer = Logger.LogWriter;
+        writer.debug(msg);
     }
     public static Info(msg: string) {
-        this._LogWriter.info(msg);
+        const writer = Logger.LogWriter;
+        writer.info(msg);
     }
 }
