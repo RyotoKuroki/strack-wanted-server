@@ -1,5 +1,6 @@
 import { createConnection, BaseEntity, Connection, QueryRunner } from 'typeorm';
 import Accessor from '../app.db.accessors/Accessor';
+import AccessorConfig from '../app.db.accessors/Accessor.Config';
 
 export default class Flow {
 
@@ -8,7 +9,7 @@ export default class Flow {
 
     public async Run(entities: Array<any>): Promise<any> {
         const accessor = new Accessor();
-        const config = accessor.GetConfig(entities);
+        const config = AccessorConfig.GetConfig(entities);
         this._Accessor = await accessor.CreateConnection(config);
         return {};
     }

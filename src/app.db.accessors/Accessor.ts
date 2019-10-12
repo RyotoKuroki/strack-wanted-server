@@ -1,43 +1,27 @@
-import { /*getConnectionOptions,*/SelectQueryBuilder, getRepository, BaseEntity, createConnections, createConnection,/* BaseEntity,*/ Connection, QueryRunner, Repository, EntityManager, QueryBuilder, getConnection } from 'typeorm';
+import { /*getConnectionOptions,*/ SelectQueryBuilder, getRepository, BaseEntity, createConnections, createConnection,/* BaseEntity,*/ Connection, QueryRunner, Repository, EntityManager, QueryBuilder, getConnection } from 'typeorm';
 import TrWanted from '../app.db.entities/TrWanted';
 import uuid from 'node-uuid';
-import Logger from '../app.logger/Logger';
+// import Logger from '../app.logger/Logger';
 
 export default class Accessor {
 
-    protected static _GlobalConnection: Connection;
+    protected static _ConnectionPool: Connection;
 
     // queryrunner
     protected _QueryRunner!: QueryRunner;
     public get DbQueryRunner(): QueryRunner { return this._QueryRunner; }
 
-    /** DB接続設定情報を取得。適宜設定のこと！*/
-    public GetConfig(schemas?: Array<any>): any {
-        // スキーマ未設定の場合は全スキーマを設定しておくことにする。
-        const ss = (schemas && schemas.length > 0) ? schemas : [
-            TrWanted,
-        ];
-        return {
-            type: "mysql",
-            // extra: { socketPath: '/cloudsql/{YOUR_DATABASE_PATH}' },
-            host: "{YOUR_DATABASE_IP_ADDRESS}",
-            port: {YOUR_DATABASE_PORT},
-            username: "{USER_NAME}",
-            password: "{PASSWORD}",
-            database: "{DATABASE_NAME}",
-            entities: ss
-        };
-    }
     /** コネクション生成 */
     public async CreateConnection(config: any): Promise<any> {
 
-        if(Accessor._GlobalConnection === undefined || 
-           Accessor._GlobalConnection === null){
-            Accessor._GlobalConnection = await createConnection(config);
-        } else if(Accessor._GlobalConnection.isConnected === false){
-            Accessor._GlobalConnection = await Accessor._GlobalConnection.connect();
+        if(Accessor._ConnectionPool === undefined || 
+           Accessor._ConnectionPool === null){
+            Accessor._ConnectionPool = await createConnection(config);
+        } else if(Accessor._ConnectionPool.isConnected === false){
+            await Accessor._ConnectionPool.close();
+            Accessor._ConnectionPool = await Accessor._ConnectionPool.connect();
         }
-        BaseEntity.useConnection(Accessor._GlobalConnection);
+        BaseEntity.useConnection(Accessor._ConnectionPool);
         return this;
     }
     // 暫定コメントアウト！
