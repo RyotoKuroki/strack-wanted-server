@@ -13,11 +13,11 @@ export default class AccessorConfig {
         return {
             type: "mysql",
             // extra: { socketPath: '/cloudsql/{YOUR_DATABASE_PATH}' },
-            host: "35.229.244.159",
-            port: 3306,
-            username: "strack-wanted-usr-jegphr45er5",
-            password: "strack-wanted-pswd-gao5erg51f3sdfa",
-            database: "strack_rdb_6grga3waee4",
+            host: {YOUR_DATABASE_HOST_IP},
+            port: {PORT},
+            username: {USER_NAME},
+            password: {PASSWORD},
+            database: {DATABASE_NAME},
             entities: ss
         };
     }
