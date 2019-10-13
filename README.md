@@ -15,15 +15,14 @@ npm install
 ```
 npm run build
 ```
+### Compiles and hot-reloads for development
+```
+npm run dev
+```
 
 ### Run server
 ```
 npm run start
-```
-
-### Compiles and hot-reloads for development
-```
-npm run dev
 ```
 
 ### Run typeorm test
