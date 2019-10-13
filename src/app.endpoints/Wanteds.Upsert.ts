@@ -14,24 +14,23 @@ export default class WantedsUpsert {
         .then(async (result: any) => {
             // await flow.BeginTransaction();
 
-            if(dtoWanted.uuid === ''){
-                // for add new-row
-                result.target = dtoWanted;
-                return result;
+            // TrWanted型オブジェクトか、無し のいずれか
+            let target: TrWanted | undefined = dtoWanted;
+            if(dtoWanted.uuid !== ''){
+                // 既存データの更新の場合、ID、バージョン でDB検索
+                const modify = await TrWanted.findOne({
+                    where: {
+                        //whois: wanted.whois
+                        uuid: dtoWanted.uuid,
+                        revision: dtoWanted.revision
+                    }
+                });
+                target = modify;
             }
-            // for modify
-            const modify = await TrWanted.findOne({
-                where: {
-                    //whois: wanted.whois
-                    uuid: dtoWanted.uuid,
-                    revision: dtoWanted.revision
-                }
-            });
             // 該当の UUID、バージョン の情報が存在しない場合は排他エラー
-            if(!modify)
+            if(!target)
                 throw new Error(`排他エラー`);
             
-            const target: TrWanted = result.target;
             target.uuid = (!target.uuid || target.uuid === '') ? (`${uuid.v4()}-${Date.now()}`) : target.uuid;
             target.image_base64 = dtoWanted.image_base64;
             target.name = dtoWanted.name;
@@ -42,7 +41,7 @@ export default class WantedsUpsert {
             await TrWanted.save(target);
             // await flow.Commit();
             
-            result.target = modify;
+            result.target = target;
             return result;
         })
         .then(async (result: any) => {
