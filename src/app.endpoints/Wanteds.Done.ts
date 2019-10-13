@@ -1,4 +1,4 @@
-import Flow from '../app.flows/Flow';
+import Flow from '../app.db.flows/Flow';
 import TrWanted from '../app.db.entities/TrWanted';
 // import uuid from 'node-uuid';
 
@@ -8,7 +8,7 @@ export default class WantedsUpsert {
         
         const params = req.body;
         const dtoWanted: TrWanted = params.wanteds[0];
-        
+
         const flow = new Flow();
         flow.Run([TrWanted])
         .then(async (result: any) => {
@@ -25,25 +25,26 @@ export default class WantedsUpsert {
             if(!target)
                 throw new Error(`排他エラー`);
 
-            await flow.BeginTransaction();
+            // TODO: トランザクション管理
+            // await flow.BeginTransaction();
 
             target.done = dtoWanted.done;
             target.revision = ++target.revision;
             await TrWanted.save(target);
-            await flow.Commit();
+            // await flow.Commit();
 
             result.target = target;
             return result;
         })
         .then(async (result: any) => {
-            await flow.Release();
+            // await flow.Release();
             return res.send(JSON.stringify({
                 success: true,
                 wanteds: [result.target]
             }));
         })
         .catch(async (error: any) => {
-            await flow.Release();
+            // await flow.Release();
             throw new Error(JSON.stringify({
                 success: false,
                 reason: error

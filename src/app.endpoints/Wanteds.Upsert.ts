@@ -1,4 +1,4 @@
-import Flow from '../app.flows/Flow';
+import Flow from '../app.db.flows/Flow';
 import TrWanted from '../app.db.entities/TrWanted';
 import uuid from 'node-uuid';
 
@@ -8,11 +8,11 @@ export default class WantedsUpsert {
         
         const params = req.body;
         const dtoWanted: TrWanted = params.wanteds[0];
-        
+
         const flow = new Flow();
         flow.Run([TrWanted])
         .then(async (result: any) => {
-            await flow.BeginTransaction();
+            // await flow.BeginTransaction();
 
             if(dtoWanted.uuid === ''){
                 // for add new-row
@@ -40,20 +40,20 @@ export default class WantedsUpsert {
             target.done = dtoWanted.done;
             target.revision = ++target.revision;
             await TrWanted.save(target);
-            await flow.Commit();
+            // await flow.Commit();
             
             result.target = modify;
             return result;
         })
         .then(async (result: any) => {
-            await flow.Release();
+            // await flow.Release();
             return res.send(JSON.stringify({
                 success: true,
                 wanteds: [result.target]
             }));
         })
         .catch(async (error: any) => {
-            await flow.Release();
+            // await flow.Release();
             throw new Error(JSON.stringify({
                 success: false,
                 reason: error
