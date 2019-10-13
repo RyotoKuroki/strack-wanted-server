@@ -13,19 +13,20 @@ export default class Flow {
         this._Accessor = await accessor.CreateConnection(config);
         return {};
     }
-    // 暫定コメントアウト
-    /*
+    /** begin transaction */
     public async BeginTransaction() {
         return await this._Accessor.BeginTransaction();
     }
+    /** commit */
     public async Commit() {
         return await this._Accessor.CommitTransaction();
     }
+    /** rollback */
     public async Rollback() {
         return await this._Accessor.RollbackTransaction();
     }
+    /** release */
     public async Release() {
         return await this._Accessor.Release();
     }
-    */
 }
