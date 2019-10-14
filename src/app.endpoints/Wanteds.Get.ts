@@ -1,5 +1,6 @@
 import Flow from '../app.db.flows/Flow';
 import TrWanted from '../app.db.entities/TrWanted';
+import WantedDomain from '../app.domains/WantedDomain';
 
 export default class WantedsGet {
 
@@ -8,11 +9,9 @@ export default class WantedsGet {
         const flow = new Flow();
         flow.Run([TrWanted])
         .then(async (result: any) => {
-            const wanteds = await TrWanted.find({
-                where: {
-                    enabled: 'enable'
-                }
-            });
+
+            const wantedDm = new WantedDomain(flow);
+            const wanteds = await wantedDm.FindAll(WantedDomain.ENABLED_STATUS__ENABLED);
             result.wanteds = wanteds;
             return result;
         })

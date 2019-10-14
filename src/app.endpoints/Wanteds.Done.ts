@@ -1,5 +1,6 @@
 import Flow from '../app.db.flows/Flow';
 import TrWanted from '../app.db.entities/TrWanted';
+import WantedDomain from '../app.domains/WantedDomain';
 // import uuid from 'node-uuid';
 
 export default class WantedsUpsert {
@@ -10,30 +11,20 @@ export default class WantedsUpsert {
         const dtoWanted: TrWanted = params.wanteds[0];
 
         const flow = new Flow();
-        flow.Run([TrWanted])
-        .then(async (result: any) => {
+        flow.RunWithTransaction([TrWanted], async (result: any) => {
+
+            const wantedDm = new WantedDomain(flow);
+            const target = await wantedDm.FindOne(dtoWanted.uuid, dtoWanted.revision);
 
             // check
-            const target = await TrWanted.findOne({
-                where: {
-                    //whois: wanted.whois
-                    uuid: dtoWanted.uuid,
-                    revision: dtoWanted.revision
-                }
-            });
             // 該当の UUID、バージョン の情報が存在しない場合は排他エラー
             if(!target)
                 throw new Error(`排他エラー`);
+            
+            // upsert
+            const doneWanted = await wantedDm.UpdateDone(target, dtoWanted.done);
+            result.target = doneWanted;
 
-            // TODO: トランザクション管理
-            // await flow.BeginTransaction();
-
-            target.done = dtoWanted.done;
-            target.revision = ++target.revision;
-            await TrWanted.save(target);
-            // await flow.Commit();
-
-            result.target = target;
             return result;
         })
         .then(async (result: any) => {
