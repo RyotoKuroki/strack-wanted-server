@@ -1,5 +1,6 @@
-import Flow from '../app.db.flows/Flow';
+import Datastore from '../app.infrastructure.datastore/Infra.Datastore';
 import TrWanted from '../app.db.entities/TrWanted';
+import WantedDomain from '../app.domains/WantedDomain';
 // import uuid from 'node-uuid';
 
 export default class WantedsDelete {
@@ -9,46 +10,25 @@ export default class WantedsDelete {
         const params = req.body;
         const dtoWanted: TrWanted = params.wanteds[0];
         
-        const flow = new Flow();
-        flow.Run([TrWanted])
-        .then(async (result: any) => {
+        const datastore = new Datastore();
+        datastore.Run([TrWanted])
+        datastore.RunWithTransaction([TrWanted], async (result: any) => {
 
-            // check
-            if(dtoWanted.uuid === '')
-                throw new Error('削除対象データがありません');
-
-            // get org
-            const target = await TrWanted.findOne({
-                where: {
-                    //whois: wanted.whois
-                    uuid: dtoWanted.uuid,
-                    revision: dtoWanted.revision
-                }
-            });
-            // 該当の UUID、バージョン の情報が存在しない場合は排他エラー
-            if(!target)
-                throw new Error(`排他エラー`);
-            
-            // TODO: トランザクション管理
-            // await flow.BeginTransaction();
-
-            target.enabled = 'disable';
-            target.revision = ++target.revision;
-            await TrWanted.save(target);
-            // await flow.Commit();
+            // 論理削除。
+            const wantedDm = new WantedDomain(datastore);
+            const patchKeys = wantedDm.CreatePatchSpecifyKeys(dtoWanted.uuid, dtoWanted.revision);
+            const target = await wantedDm.Remove(patchKeys);
             
             result.target = target;
             return result;
         })
         .then(async (result: any) => {
-            // await flow.Release();
             return res.send(JSON.stringify({
                 success: true,
                 wanteds: [result.target]
             }));
         })
         .catch(async (error: any) => {
-            // await flow.Release();
             throw new Error(JSON.stringify({
                 success: false,
                 reason: error

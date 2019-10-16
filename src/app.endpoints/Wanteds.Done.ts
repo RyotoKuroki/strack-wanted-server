@@ -1,4 +1,4 @@
-import Flow from '../app.db.flows/Flow';
+import Datastore from '../app.infrastructure.datastore/Infra.Datastore';
 import TrWanted from '../app.db.entities/TrWanted';
 import WantedDomain from '../app.domains/WantedDomain';
 // import uuid from 'node-uuid';
@@ -10,32 +10,25 @@ export default class WantedsUpsert {
         const params = req.body;
         const dtoWanted: TrWanted = params.wanteds[0];
 
-        const flow = new Flow();
-        flow.RunWithTransaction([TrWanted], async (result: any) => {
+        const datastore = new Datastore();
+        datastore.RunWithTransaction([TrWanted], async (result: any) => {
 
-            const wantedDm = new WantedDomain(flow);
-            const target = await wantedDm.FindOne(dtoWanted.uuid, dtoWanted.revision);
+            const wantedDm = new WantedDomain(datastore);
 
-            // check
-            // 該当の UUID、バージョン の情報が存在しない場合は排他エラー
-            if(!target)
-                throw new Error(`排他エラー`);
-            
-            // upsert
-            const doneWanted = await wantedDm.UpdateDone(target, dtoWanted.done);
-            result.target = doneWanted;
+            // 更新。
+            const patchKeys = wantedDm.CreatePatchSpecifyKeys(dtoWanted.uuid, dtoWanted.revision);
+            const done = await wantedDm.UpdateDone(patchKeys, dtoWanted.done === WantedDomain.DONE_STATUS__DONE);
 
+            result.target = done;
             return result;
         })
         .then(async (result: any) => {
-            // await flow.Release();
             return res.send(JSON.stringify({
                 success: true,
                 wanteds: [result.target]
             }));
         })
         .catch(async (error: any) => {
-            // await flow.Release();
             throw new Error(JSON.stringify({
                 success: false,
                 reason: error

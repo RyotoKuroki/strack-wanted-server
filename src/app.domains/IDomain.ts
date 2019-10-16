@@ -1,7 +1,6 @@
 // import { EntityManager, QueryRunner } from "typeorm";
-import Flow from '../app.db.flows/Flow';
+import Datastore from '../app.infrastructure.datastore/Infra.Datastore';
 
 export default interface IDomain {
-    _Flow: Flow;
-    SetFlow(flow: Flow);
+    _Datastore: Datastore;
 }

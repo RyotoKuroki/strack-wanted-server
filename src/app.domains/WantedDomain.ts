@@ -1,65 +1,223 @@
 // import { EntityManager, QueryRunner } from "typeorm";
-import Flow from "../app.db.flows/Flow";
+import Datastore from "../app.infrastructure.datastore/Infra.Datastore";
 import TrWanted from "../app.db.entities/TrWanted";
 import IDomain from "./IDomain";
 
 export default class WantedDomain implements IDomain {
     
-    public static readonly ENABLED_STATUS__ENABLED: string = 'enable'; // TODO: strack-wanted-meta に持って行って共通定義化
+    // TODO: strack-wanted-meta に持って行って共通定義化
+    public static readonly ENABLED_STATUS__ENABLED: string = 'enable';
+    public static readonly ENABLED_STATUS__DISABLED: string = 'disable';
+    
+    // TODO: strack-wanted-meta に持って行って共通定義化
+    public static readonly DONE_STATUS__DONE: string = 'done';
+    
+    // dbstore
+    _Datastore!: Datastore;
 
-    _Flow!: Flow;
-    public SetFlow(flow: Flow) {
-        this._Flow = flow;
+    /**
+     * コンストラクタ
+     * @param datastore 
+     */
+    constructor(datastore: Datastore) {
+        this._Datastore = datastore;
     }
 
-    constructor(flow: Flow) {
-        this.SetFlow(flow);
+    /**
+     * データ登録・更新時、データを特定するためのキー生成
+     * @param uuid 
+     * @param revision 
+     */
+    public CreatePatchSpecifyKeys(uuid: string, revision: number) {
+        const patchKeys = new PatchSpecifyKeys(uuid, revision);
+        return patchKeys;
+    }
+    
+    /**
+     * Wanted 情報を1件取得。
+     * 取得できない場合は undefined。
+     * @param patchKeys 
+     * @param enabled
+     */
+    public async FindOne(patchKeys: PatchSpecifyKeys, enabled?: string): Promise<TrWanted | undefined> {
+
+        let conditions = {
+            where: {
+                uuid: patchKeys.uuid,
+                revision: patchKeys.revision
+            }
+        };
+        conditions = this.setConditionEnabled(conditions, enabled);
+        const wanted = await TrWanted.findOne(conditions);
+        return wanted;
     }
 
     /**
      * Wanted 情報を1件取得。
-     * 取得できない場合は undefined。
-     * @param uuid 
-     * @param revision 
+     * 取得できない場合はエラー。
+     * @param patchKeys 
      * @param enabled
      */
-    public async FindOne(uuid: string, revision: number, enabled?: string): Promise<TrWanted | undefined> {
+    public async FindOneOrError(patchKeys: PatchSpecifyKeys, enabled?: string): Promise<TrWanted> {
 
-        const wanted = await TrWanted.findOne({
-            where: {
-                enabled: (enabled !== undefined) ? enabled : WantedDomain.ENABLED_STATUS__ENABLED,
-                uuid: uuid,
-                revision: revision
-            }
-        });
-        return wanted;
+        const one = await this.FindOne(patchKeys, enabled);
+
+        if(!one)
+            throw new NotFoundSuchWantedError('not found', 'not found', '');
+        
+        return one;
     }
 
     /**
      * Wanted 情報を全て取得。
      * @param enabled
      */
-    public async FindAll(enabled?: string) {
-
-        const wanteds = await TrWanted.find({
-            where: {
-                enabled: (enabled !== undefined) ? enabled : WantedDomain.ENABLED_STATUS__ENABLED,
-            },
-            // order: { ['name']: 'ASC' }
-        });
-        return wanteds;
+    public async FindMatches(enabled?: string) {
+        let conditions = { where: {} };
+        conditions = this.setConditionEnabled(conditions, enabled);
+        return await TrWanted.find(conditions);
     }
 
     /**
      * Wanted 情報の Done 状態を更新。
-     * @param wanted 
+     * @param patchKeys 
      * @param done 
      */
-    public async UpdateDone(wanted: TrWanted, done: string) {
+    public async UpdateDone(patchKeys: PatchSpecifyKeys, done: boolean) {
+        const one = await this.FindOneOrError(patchKeys);
+        one.done = done ? WantedDomain.DONE_STATUS__DONE : '';
+        one.revision = ++one.revision;
+        const result = await this._Datastore.Update(one);
 
-        wanted.done = done;
-        wanted.revision = ++wanted.revision;
-        const saved = await this._Flow.Upsert(wanted);
-        return saved;
+        // 更新結果が無い場合はエラー
+        // ※排他エラー
+        if(!result)
+            throw new NotFoundSuchWantedError('Not found', 'Not found', '');
+
+        return result;
+    }
+
+    /**
+     * Wanted 情報を削除（論理）。
+     * @param patchKeys 
+     */
+    public async Remove(patchKeys: PatchSpecifyKeys) {
+
+        const one = await this.FindOneOrError(patchKeys);
+        one.enabled = 'disable';
+        one.revision = ++one.revision;
+        const result = await this._Datastore.Update(one);
+
+        // 更新結果が無い場合はエラー
+        // ※排他エラー
+        if(!result)
+            throw new NotFoundSuchWantedError('Not found', 'Not found', '');
+
+        return result;
+    }
+
+    /**
+     * Wanted 情報を更新。
+     * @param patchKeys 
+     * @param values 
+     */
+    public async Update(patchKeys: PatchSpecifyKeys, values: {
+            name?: string,
+            prize_money?: number,
+            warning?: string,
+            image_base64?: string })
+    {
+        const one = await this.FindOneOrError(patchKeys);
+        if(values.name) one.name = values.name;
+        if(values.prize_money) one.prize_money = values.prize_money;
+        if(values.warning) one.warning = values.warning;
+        if(values.image_base64) one.image_base64 = values.image_base64;
+        const result = await this._Datastore.Update(one);
+
+        // 更新結果が無い場合はエラー
+        // ※排他エラー
+        if(!result)
+            throw new CouldNotUpdateError('Failed update.', 'Failed update', '');
+        
+        return result;
+    }
+
+    /**
+     * Wanted 情報を新規登録。
+     * @param values 
+     */
+    public async Insert(
+        values: {
+            name?: string,
+            prize_money?: number,
+            warning?: string,
+            image_base64?: string }
+    ) {
+        const one: TrWanted = new TrWanted();
+        one.uuid = 'insert-test';
+        one.revision = 0;
+        one.enabled = WantedDomain.ENABLED_STATUS__ENABLED;
+        one.whois = ''; // TODO: ユーザ管理
+        one.done = '';
+        if(values.name) one.name = values.name;
+        if(values.prize_money) one.prize_money = values.prize_money;
+        if(values.warning) one.warning = values.warning;
+        if(values.image_base64) one.image_base64 = values.image_base64;
+        return await this._Datastore.Insert(TrWanted, one);
+    }
+
+    /**
+     * enabled フィールドを設定
+     * @param condition 
+     * @param enabled 
+     */
+    protected setConditionEnabled(condition: any, enabled?: string): any {
+        if(enabled !== undefined) {
+            condition.where.enabled = enabled;
+        }
+        return condition;
+    }
+}
+
+/**
+ * 抽出条件に見合うデータが存在しない場合のエラー
+ */
+export class NotFoundSuchWantedError extends Error {
+    public code: string;
+    public message: string;
+    public stack?: string;
+    constructor(code: string, message: string, stack?: string) {
+        super();
+        this.code = code;
+        this.message = message;
+        this.stack = stack;
+    }
+}
+
+/**
+ * 更新処理失敗時のエラー
+ */
+export class CouldNotUpdateError extends Error {
+    public code: string;
+    public message: string;
+    public stack?: string;
+    constructor(code: string, message: string, stack?: string) {
+        super();
+        this.code = code;
+        this.message = message;
+        this.stack = stack;
+    }
+}
+
+/**
+ * データの登録・更新時に必要なキー情報。
+ * 現状は。情報を特定するための uuid と、バージョン管理のための revision。
+ */
+export class PatchSpecifyKeys {
+    public readonly uuid!: string;
+    public readonly revision!: number;
+    constructor(uuid: string, revision: number) {
+        this.uuid = uuid;
+        this.revision = revision;
     }
 }

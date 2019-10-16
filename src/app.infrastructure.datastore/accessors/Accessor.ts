@@ -1,6 +1,4 @@
-import { /*getConnectionOptions,*/ SelectQueryBuilder, getRepository, BaseEntity, createConnections, createConnection,/* BaseEntity,*/ Connection, QueryRunner, Repository, EntityManager, QueryBuilder, getConnection } from 'typeorm';
-import TrWanted from '../app.db.entities/TrWanted';
-import uuid from 'node-uuid';
+import { createConnection,Connection, QueryRunner } from 'typeorm';
 // import Logger from '../app.logger/Logger';
 
 export default class Accessor {
@@ -34,6 +32,7 @@ export default class Accessor {
         // queryrunner
         const runner = Accessor._ConnectionPool.createQueryRunner();
         this._QueryRunner = runner;
+
         return this;
     }
 }
