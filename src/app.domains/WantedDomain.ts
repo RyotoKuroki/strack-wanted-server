@@ -2,6 +2,7 @@
 import Datastore from "../app.infrastructure.datastore/Infra.Datastore";
 import TrWanted from "../app.db.entities/TrWanted";
 import IDomain from "./IDomain";
+import uuid from 'node-uuid';
 
 export default class WantedDomain implements IDomain {
     
@@ -154,10 +155,9 @@ export default class WantedDomain implements IDomain {
             image_base64?: string }
     ) {
         const one: TrWanted = new TrWanted();
-        one.uuid = 'insert-test';
+        one.uuid = `${uuid.v4()}-${Date.now()}`;
         one.revision = 0;
         one.enabled = WantedDomain.ENABLED_STATUS__ENABLED;
-        one.whois = ''; // TODO: ユーザ管理
         one.done = '';
         if(values.name) one.name = values.name;
         if(values.prize_money) one.prize_money = values.prize_money;

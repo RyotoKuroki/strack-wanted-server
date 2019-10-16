@@ -1,7 +1,6 @@
 import Datastore from '../app.infrastructure.datastore/Infra.Datastore';
 import TrWanted from '../app.db.entities/TrWanted';
 import WantedDomain from '../app.domains/WantedDomain';
-import uuid from 'node-uuid';
 
 export default class WantedsUpsert {
 
@@ -29,11 +28,7 @@ export default class WantedsUpsert {
                 result.target = modify;
             } else {
                 // insert
-                target.uuid = (!target.uuid || target.uuid === '') ? (`${uuid.v4()}-${Date.now()}`) : target.uuid;
-                target.whois = '';
-                target.revision = 0;
-                target.enabled = 'enable';
-                target.done = '';
+                target.whois = ''; // TODO: ユーザ管理
                 target.image_base64 = dtoWanted.image_base64;
                 target.name = dtoWanted.name;
                 target.prize_money = dtoWanted.prize_money;
