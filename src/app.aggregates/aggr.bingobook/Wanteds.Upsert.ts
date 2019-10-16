@@ -1,6 +1,6 @@
-import Datastore from '../app.infrastructure.datastore/Infra.Datastore';
-import TrWanted from '../app.db.entities/TrWanted';
-import WantedDomain from '../app.domains/WantedDomain';
+import Datastore from '../../app.infras/infra.datastores/Infra.Datastore';
+import TrWanted from '../../app.db.entities/TrWanted';
+import WantedDomain from '../../app.domains/Wanted.Domain';
 
 export default class WantedsUpsert {
 

@@ -1,5 +1,5 @@
-import Accessor from './accessors/Accessor';
-import AccessorConfig from './accessors/Accessor.Config';
+import Accessor from './datastore.accessors/Accessor';
+import AccessorConfig from './datastore.accessors/Accessor.Config';
 
 export default class Datastore {
 

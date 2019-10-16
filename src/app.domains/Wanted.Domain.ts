@@ -1,7 +1,7 @@
 // import { EntityManager, QueryRunner } from "typeorm";
-import Datastore from "../app.infrastructure.datastore/Infra.Datastore";
+import Datastore from "../app.infras/infra.datastores/Infra.Datastore";
 import TrWanted from "../app.db.entities/TrWanted";
-import IDomain from "./IDomain";
+import IDomain from "./I.Domain";
 import uuid from 'node-uuid';
 
 export default class WantedDomain implements IDomain {
