@@ -11,7 +11,6 @@ export default class WantedsDelete {
         const dtoWanted: TrWanted = params.wanteds[0];
         
         const datastore = new Datastore();
-        datastore.Run([TrWanted])
         datastore.RunWithTransaction([TrWanted], async (result: any) => {
 
             // 論理削除。
