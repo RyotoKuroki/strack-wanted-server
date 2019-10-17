@@ -1,24 +1,25 @@
 import Datastore from '../../app.infras/infra.datastores/Infra.Datastore';
-import TrWanted from '../../app.db.entities/TrWanted';
-import WantedDomain from '../../app.domains/Wanted.Domain';
+import TrWanted from '../../app.entities/TrWanted';
+import WantedDomain from '../Wanted.Domain';
 // import uuid from 'node-uuid';
 
-export default class WantedsDelete {
+export default class WantedsUpsert {
 
-    public async Delete(req, res, next) {
+    public async Save(req, res, next) {
         
         const params = req.body;
         const dtoWanted: TrWanted = params.wanteds[0];
-        
+
         const datastore = new Datastore();
         datastore.RunWithTransaction([TrWanted], async (result: any) => {
 
-            // 論理削除。
             const wantedDm = new WantedDomain(datastore);
+
+            // 更新。
             const patchKeys = wantedDm.CreatePatchSpecifyKeys(dtoWanted.uuid, dtoWanted.revision);
-            const target = await wantedDm.Remove(patchKeys);
-            
-            result.target = target;
+            const done = await wantedDm.UpdateDone(patchKeys, dtoWanted.done === WantedDomain.DONE_STATUS__DONE);
+
+            result.target = done;
             return result;
         })
         .then(async (result: any) => {

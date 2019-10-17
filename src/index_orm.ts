@@ -1,11 +1,11 @@
 import { createConnection, BaseEntity } from 'typeorm';
-import TrWanted from './app.db.entities/TrWanted';
+import TrWanted from './app.entities/TrWanted';
 
 // ORM - TEST
 createConnection({
     name: 'hogehoge',
     type: "mysql",
- /* extra: { socketPath: '/cloudsql/appo-ja:asia-east1:strack-wanted-rdb' }, */
+    /* extra: { socketPath: '/cloudsql/appo-ja:asia-east1:strack-wanted-rdb' }, */
     host: {YOUR_DATABASE_HOST_IP},
     port: {PORT},
     username: {USER_NAME},

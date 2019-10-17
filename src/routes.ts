@@ -1,8 +1,8 @@
 import express from 'express';
-import WantedsGet from './app.aggregates/aggr.wanted.fetch/Wanteds.Get';
-import WantedsDelete from './app.aggregates/aggr.bingobook/Wanteds.Delete';
-import WantedsUpsert from './app.aggregates/aggr.bingobook/Wanteds.Upsert';
-import WantedsDone from './app.aggregates/aggr.strackout/Wanteds.Done';
+import WantedsGet from './app.domains/wanted.fetch/Wanteds.Get';
+import WantedsDelete from './app.domains/bingobook/Wanteds.Delete';
+import WantedsUpsert from './app.domains/bingobook/Wanteds.Upsert';
+import WantedsDone from './app.domains/strackout/Wanteds.Done';
 
 const cors = require('cors')({Origin: true});
 const router = express.Router();
