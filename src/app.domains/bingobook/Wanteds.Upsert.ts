@@ -28,11 +28,11 @@ export default class WantedsUpsert {
                 result.target = modify;
             } else {
                 // insert
-                target.whois = ''; // TODO: ユーザ管理
-                target.image_base64 = dtoWanted.image_base64;
-                target.name = dtoWanted.name;
-                target.prize_money = dtoWanted.prize_money;
-                target.warning = dtoWanted.warning;
+                //target.whois = ''; // TODO: ユーザ管理
+                //target.image_base64 = dtoWanted.image_base64;
+                //target.name = dtoWanted.name;
+                //target.prize_money = dtoWanted.prize_money;
+                //target.warning = dtoWanted.warning;
                 const ins = await wantedDm.Insert({
                     name: dtoWanted.name,
                     prize_money: dtoWanted.prize_money,
