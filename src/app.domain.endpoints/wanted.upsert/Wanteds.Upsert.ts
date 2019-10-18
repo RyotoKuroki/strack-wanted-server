@@ -1,4 +1,4 @@
-import Datastore from '../../app.infras/infra.datastores/Infra.Datastore';
+import DataStore from '../../app.infras/infra.datastores/DataStore';
 import TrWanted from '../../app.entities/TrWanted';
 import WantedDomain from '../Wanted.Domain';
 
@@ -9,7 +9,7 @@ export default class WantedsUpsert {
         const params = req.body;
         const dtoWanted: TrWanted = params.wanteds[0];
 
-        const datastore = new Datastore();
+        const datastore = new DataStore();
         datastore.RunWithTransaction([TrWanted], async (result: any) => {
 
             const wantedDm = new WantedDomain(datastore);
@@ -28,11 +28,6 @@ export default class WantedsUpsert {
                 result.target = modify;
             } else {
                 // insert
-                //target.whois = ''; // TODO: ユーザ管理
-                //target.image_base64 = dtoWanted.image_base64;
-                //target.name = dtoWanted.name;
-                //target.prize_money = dtoWanted.prize_money;
-                //target.warning = dtoWanted.warning;
                 const ins = await wantedDm.Insert({
                     name: dtoWanted.name,
                     prize_money: dtoWanted.prize_money,

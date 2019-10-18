@@ -1,7 +1,7 @@
 import Accessor from './datastore.accessors/Accessor';
 import AccessorConfig from './datastore.accessors/Accessor.Config';
 
-export default class Datastore {
+export default class DataStore {
 
     protected _Accessor!: Accessor;
 
@@ -10,11 +10,20 @@ export default class Datastore {
      * トランザクション管理なし。
      * @param entities 
      */
-    public async Run(entities: Array<any>): Promise<any> {
+    public async Run(entities: Array<any>, patch: (result: any) => Promise<any>): Promise<any> {
         const accessor = new Accessor();
         const config = AccessorConfig.GetConfig(entities);
         this._Accessor = await accessor.CreateConnection(config);
-        return {};
+
+        try {
+            const result = await patch({});
+            return result;
+
+        } catch(ex) {
+            throw new Error(ex);
+        } finally {
+            await this.Release();
+        }
     }
     /**
      * DB接続の下処理のテンプレート。
@@ -22,7 +31,7 @@ export default class Datastore {
      * @param entities 
      * @param patchInTran 
      */
-    public async RunWithTransaction<BaseEntity>(entities: BaseEntity[], patchInTran: (result: any) => Promise<any>): Promise<any> {
+    public async RunWithTransaction(entities: any[], patchInTran: (result: any) => Promise<any>): Promise<any> {
         const accessor = new Accessor();
         const config = AccessorConfig.GetConfig(entities);
         this._Accessor = await accessor.CreateConnection(config);

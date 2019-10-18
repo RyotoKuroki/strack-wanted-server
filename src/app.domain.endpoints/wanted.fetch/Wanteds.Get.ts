@@ -1,4 +1,4 @@
-import Datastore from '../../app.infras/infra.datastores/Infra.Datastore';
+import DataStore from '../../app.infras/infra.datastores/DataStore';
 import TrWanted from '../../app.entities/TrWanted';
 import WantedDomain from '../Wanted.Domain';
 
@@ -6,9 +6,8 @@ export default class WantedsGet {
 
     public async Get(req, res, next) {
 
-        const datastore = new Datastore();
-        datastore.Run([TrWanted])
-        .then(async (result: any) => {
+        const datastore = new DataStore();
+        datastore.Run([TrWanted], async (result: any) => {
 
             const wantedDm = new WantedDomain(datastore);
             const wanteds = await wantedDm.FindMatches(WantedDomain.ENABLED_STATUS__ENABLED);

@@ -1,4 +1,4 @@
-import Datastore from '../../app.infras/infra.datastores/Infra.Datastore';
+import DataStore from '../../app.infras/infra.datastores/DataStore';
 import TrWanted from '../../app.entities/TrWanted';
 import WantedDomain from '../Wanted.Domain';
 // import uuid from 'node-uuid';
@@ -10,7 +10,7 @@ export default class WantedsDelete {
         const params = req.body;
         const dtoWanted: TrWanted = params.wanteds[0];
         
-        const datastore = new Datastore();
+        const datastore = new DataStore();
         datastore.RunWithTransaction([TrWanted], async (result: any) => {
 
             // 論理削除。
