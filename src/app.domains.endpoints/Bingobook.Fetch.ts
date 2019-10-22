@@ -16,7 +16,6 @@ export default class WantedsGet {
         bingobookFetchRepository.RunWithTran(async (result: any) => {
 
             const wantedDoneDomain = new BingobookFetchDomain(bingobookFetchRepository);
-            console.log(`domain`);
             await wantedDoneDomain.StoreWanteds(dto);
 
             result.targets = bingobookFetchRepository.StoredWanteds;

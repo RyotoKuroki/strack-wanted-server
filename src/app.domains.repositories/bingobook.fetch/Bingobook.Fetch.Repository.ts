@@ -3,6 +3,7 @@ import { AbsRepository } from '../Abs.Repository';
 import IBingobookFetchRepository from './I.Bingobook.Fetch.Repository';
 import DataStore from '../../app.infras/infra.datastores/DataStore';
 import { TrWanted, PatchSpecifyKeys } from '../../app.entities/TrWanted';
+import { EntityEnabledStatesConsts } from '../../app.consts/states/states.entity.enabled';
 
 export class BingobookFetchRepository extends AbsRepository implements IBingobookFetchRepository {
 
@@ -10,6 +11,7 @@ export class BingobookFetchRepository extends AbsRepository implements IBingoboo
     // @@@@@@ override AbsWantedDoneRepository @@@@@@
     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+    protected EntityEnabledStates = EntityEnabledStatesConsts();
     /**
      * StoredWanted 情報のコピーを外部に提供する。
      * Wanted インスタンスを外部に直接晒さないのは、外部から不正な参照方法で編集されることを防ぐための対策。
@@ -30,6 +32,7 @@ export class BingobookFetchRepository extends AbsRepository implements IBingoboo
         this._Wanteds = await TrWanted.find({
             where: {
                 whois: whois,
+                enabled: this.EntityEnabledStates.ENABLED,
             }
         });
         return this;

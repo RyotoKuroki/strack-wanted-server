@@ -3,16 +3,14 @@ import Datastore from "../app.infras/infra.datastores/DataStore";
 import { TrWanted } from "../app.entities/TrWanted";
 import IDomain from "./I.Domain";
 import uuid from 'node-uuid';
+import { EntityEnabledStatesConsts } from '../app.consts/states/states.entity.enabled';
+import { DoneStatesConsts } from '../app.consts/states/states.done';
 
 export default class WantedDomain implements IDomain {
     
-    // TODO: strack-wanted-meta に持って行って共通定義化
-    public static readonly ENABLED_STATUS__ENABLED: string = 'enable';
-    public static readonly ENABLED_STATUS__DISABLED: string = 'disable';
-    
-    // TODO: strack-wanted-meta に持って行って共通定義化
-    public static readonly DONE_STATUS__DONE: string = 'done';
-    
+    protected EntityEnabledStates = EntityEnabledStatesConsts();
+    protected DoneStates = DoneStatesConsts();
+
     // dbstore
     _Datastore!: Datastore;
 
@@ -86,7 +84,7 @@ export default class WantedDomain implements IDomain {
      */
     public async UpdateDone(patchKeys: PatchSpecifyKeys, done: boolean) {
         const one = await this.FindOneOrError(patchKeys);
-        one.done = done ? WantedDomain.DONE_STATUS__DONE : '';
+        one.done = done ? this.DoneStates.DONE : this.DoneStates.YET;
         one.revision = ++one.revision;
         const result = await this._Datastore.Update(one);
 
@@ -157,7 +155,7 @@ export default class WantedDomain implements IDomain {
         const one: TrWanted = new TrWanted();
         one.uuid = `${uuid.v4()}-${Date.now()}`;
         one.revision = 0;
-        one.enabled = WantedDomain.ENABLED_STATUS__ENABLED;
+        one.enabled = this.EntityEnabledStates.ENABLED;
         one.done = '';
         if(values.name) one.name = values.name;
         if(values.prize_money) one.prize_money = values.prize_money;

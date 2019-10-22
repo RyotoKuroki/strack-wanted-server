@@ -41,8 +41,6 @@ export default class DataStore {
         // const accessor = new Accessor();
         // const config = AccessorConfig.GetConfig(entities);
         // this._Accessor = await accessor.CreateConnection(config);
-
-        console.log(`datastore`);
         try {
             await this.Transaction();
             const result = await patchInTran({});
