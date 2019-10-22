@@ -55,12 +55,14 @@ export class TrWanted extends BaseEntity implements ITR_Wanted {
 
 /**
  * データの登録・更新時に必要なキー情報。
- * 現状は。情報を特定するための uuid と、バージョン管理のための revision。
+ * 現状は。データ所有者を特定するための whois、Wanted 情報を特定するための uuid と、バージョン管理のための revision。
  */
 export class PatchSpecifyKeys {
+    public readonly whois!: string;
     public readonly uuid!: string;
     public readonly revision!: number;
-    constructor(uuid: string, revision: number) {
+    constructor(whois: string, uuid: string, revision: number) {
+        this.whois = whois;
         this.uuid = uuid;
         this.revision = revision;
     }

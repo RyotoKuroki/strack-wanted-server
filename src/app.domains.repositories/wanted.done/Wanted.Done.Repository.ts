@@ -32,6 +32,7 @@ export class WantedDoneRepository extends AbsRepository implements IWantedDoneRe
     public /* override */ async StoreWanted(specifyKeys: PatchSpecifyKeys): Promise<any> {
         this._Wanted = await TrWanted.findOneOrFail({
             where: {
+                whois: specifyKeys.whois,
                 uuid: specifyKeys.uuid,
                 revision: specifyKeys.revision,
             }

@@ -2,6 +2,7 @@ import { AbsRepositoryFactory } from '../app.domains.repositories/Abs.Repository
 import { WantedDoneRepositoryFactory } from '../app.domains.repositories/wanted.done/WantedDoneRepositoryFactory';
 import { WantedDoneRepository } from '../app.domains.repositories/wanted.done/Wanted.Done.Repository';
 import WantedDoneDomain from '../app.domains/wanted.done/Wanted.Done.Domain';
+import { TrWanted } from '../app.entities/TrWanted';
 
 export default class WantedsUpsert {
 
@@ -16,8 +17,11 @@ export default class WantedsUpsert {
         const wantedDoneRepository = await factory.SetupCompletely();
         wantedDoneRepository.RunWithTran(async (result: any) => {
 
+            const params = req.body;
+            const whois: string = params.whois;
+            const wanted: TrWanted = params.wanteds[0];
             const wantedDoneDomain = new WantedDoneDomain(wantedDoneRepository);
-            await wantedDoneDomain.Done(dto);
+            await wantedDoneDomain.Done(whois, wanted);
 
             result.target = wantedDoneRepository.StoredWanted;
 
