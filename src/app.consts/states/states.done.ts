@@ -2,7 +2,7 @@ import IStates_Done from 'strack-wanted-meta/src/consts/states/I.states.done';
 
 // TODO: Strack-wanted-meta でインターフェイスでなく、クラスを実装する。
 export class DoneStates implements IStates_Done {
-    public YET: string = 'YET';
+    public YET: string = '';//'YET';
     public DONE: string = 'DONE';
 }
 
