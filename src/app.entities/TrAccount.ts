@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm'
-import ITR_Wanted from 'strack-wanted-meta/src/entities/I.tr.wanted';
+import ITR_Account from 'strack-wanted-meta/src/entities/I.tr.account';
 import uuid from 'node-uuid';
 
 @Entity()
-export class TrWanted extends BaseEntity implements ITR_Wanted {
+export class TrAccount extends BaseEntity implements ITR_Account {
     /**
      * サロゲートキー
      */
@@ -29,39 +29,23 @@ export class TrWanted extends BaseEntity implements ITR_Wanted {
      * ターゲット名
      */
     @Column({ length: 256 })
-    public name: string = '';
-    /**
-     * ターゲット確保時の懸賞金
-     */
-    @Column('double')
-    public prize_money: number = 0;
+    public user_name: string = '';
     /**
      * ターゲットの画像
      */
     @Column('longtext')
     public image_base64: string = '';
-    /**
-     * ターゲットに関する要注意情報！
-     */
-    @Column({ length: 256 })
-    public warning: string = '';
-    /**
-     * ターゲット確保済み！
-     * ''/done
-     */
-    @Column({ length: 256 })
-    public done: string = '';
 }
 
 /**
  * データの登録・更新時に必要なキー情報。
- * 現状は。情報を特定するための uuid と、バージョン管理のための revision。
+ * 現状は。情報を特定するための whois と、バージョン管理のための revision。
  */
 export class PatchSpecifyKeys {
-    public readonly uuid!: string;
+    public readonly whois!: string;
     public readonly revision!: number;
-    constructor(uuid: string, revision: number) {
-        this.uuid = uuid;
+    constructor(whois: string, revision: number) {
+        this.whois = whois;
         this.revision = revision;
     }
 }

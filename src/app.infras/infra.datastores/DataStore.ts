@@ -5,15 +5,21 @@ export default class DataStore {
 
     protected _Accessor!: Accessor;
 
+    public async Init(entities: Array<any>) {
+        const accessor = new Accessor();
+        const config = AccessorConfig.GetConfig(entities);
+        this._Accessor = await accessor.CreateConnection(config);
+        return this;
+    }
     /**
      * DB接続の下処理を実施。
      * トランザクション管理なし。
      * @param entities 
      */
-    public async Run(entities: Array<any>, patch: (result: any) => Promise<any>): Promise<any> {
-        const accessor = new Accessor();
-        const config = AccessorConfig.GetConfig(entities);
-        this._Accessor = await accessor.CreateConnection(config);
+    public async Run(/*entities: Array<any>,*/ patch: (result: any) => Promise<any>): Promise<any> {
+        // const accessor = new Accessor();
+        // const config = AccessorConfig.GetConfig(entities);
+        // this._Accessor = await accessor.CreateConnection(config);
 
         try {
             const result = await patch({});
@@ -31,11 +37,12 @@ export default class DataStore {
      * @param entities 
      * @param patchInTran 
      */
-    public async RunWithTransaction(entities: any[], patchInTran: (result: any) => Promise<any>): Promise<any> {
-        const accessor = new Accessor();
-        const config = AccessorConfig.GetConfig(entities);
-        this._Accessor = await accessor.CreateConnection(config);
+    public async RunWithTransaction(/*entities: any[],*/ patchInTran: (result: any) => Promise<any>): Promise<any> {
+        // const accessor = new Accessor();
+        // const config = AccessorConfig.GetConfig(entities);
+        // this._Accessor = await accessor.CreateConnection(config);
 
+        console.log(`datastore`);
         try {
             await this.Transaction();
             const result = await patchInTran({});
@@ -43,6 +50,7 @@ export default class DataStore {
             return result;
 
         } catch(ex) {
+            console.log(`ex in datastore : ${ex}`);
             await this.Rollback();
             throw new Error(ex);
         } finally {

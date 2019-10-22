@@ -1,6 +1,6 @@
 // import { EntityManager, QueryRunner } from "typeorm";
 import Datastore from "../app.infras/infra.datastores/DataStore";
-import TrWanted from "../app.entities/TrWanted";
+import { TrWanted } from "../app.entities/TrWanted";
 import IDomain from "./I.Domain";
 import uuid from 'node-uuid';
 

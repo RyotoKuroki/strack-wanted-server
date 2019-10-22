@@ -1,6 +1,6 @@
-import DataStore from '../../app.infras/infra.datastores/DataStore';
-import TrWanted from '../../app.entities/TrWanted';
-import WantedDomain from '../Wanted.Domain';
+import DataStore from '../app.infras/infra.datastores/DataStore';
+import { TrWanted } from '../app.entities/TrWanted';
+import WantedDomain from '../app.domains/Wanted.Domain';
 // import uuid from 'node-uuid';
 
 export default class WantedsDelete {
@@ -8,10 +8,12 @@ export default class WantedsDelete {
     public async Delete(req, res, next) {
         
         const params = req.body;
+        const whois: TrWanted = params.whois;
         const dtoWanted: TrWanted = params.wanteds[0];
         
         const datastore = new DataStore();
-        datastore.RunWithTransaction([TrWanted], async (result: any) => {
+        await datastore.Init([TrWanted]);
+        datastore.RunWithTransaction(async (result: any) => {
 
             // 論理削除。
             const wantedDm = new WantedDomain(datastore);
