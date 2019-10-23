@@ -1,6 +1,6 @@
 import { PatchSpecifyKeys } from '../../app.entities/TrWanted';
 
-export default interface IWantedDoneRepository {
+export default interface IWantedDeleteRepository {
     /**
      * DB検索。
      * Wanted情報を特定して、１件取得
@@ -8,12 +8,12 @@ export default interface IWantedDoneRepository {
      */
     StoreWanted(specifyKeys: PatchSpecifyKeys): Promise<any>;
     /**
-     * Done情報を編集
-     * @param done 
+     * Wanted 情報を編集
+     * @param enabled 
      */
-    ChangeDoneState(done: boolean): Promise<any>;
+    ChangeEnabledState(enabled: boolean): Promise<any>;
     /**
-     * DB更新
+     * DB更新（論理削除）
      */
-    UpdateDone(): Promise<any>;
+    Remove(): Promise<any>;
 }

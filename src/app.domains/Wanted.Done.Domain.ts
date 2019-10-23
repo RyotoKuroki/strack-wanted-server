@@ -1,19 +1,20 @@
-import { WantedDoneRepository } from "../../app.domains.repositories/wanted.done/Wanted.Done.Repository";
-import { PatchSpecifyKeys, TrWanted } from '../../app.entities/TrWanted';
-import { DoneStatesConsts } from '../../app.consts/states/states.done';
+// import { WantedDoneRepository } from "../../app.domains.repositories/wanted.done/Wanted.Done.Repository";
+import IWantedDoneRepository from "../app.domains.repositories/wanted.done/I.Wanted.Done.Repository";
+import { PatchSpecifyKeys, TrWanted } from '../app.entities/TrWanted';
+import { DoneStatesConsts } from '../app.consts/states/states.done';
 
 export default class WantedDoneDomain {
 
     // TODO: static
     protected DoneStates = DoneStatesConsts();
 
-    protected _WantedDoneRepository!: WantedDoneRepository;
+    protected _WantedDoneRepository!: IWantedDoneRepository;
 
-    constructor(protected wantedDoneRepository: WantedDoneRepository) {
+    constructor(protected wantedDoneRepository: IWantedDoneRepository) {
         this._WantedDoneRepository = wantedDoneRepository;
     }
 
-    public async Done(whois: string, wanted: TrWanted): Promise<WantedDoneRepository> {
+    public async Done(whois: string, wanted: TrWanted): Promise<IWantedDoneRepository> {
 
         // クライアントから受信した、Wanted 情報を特定するためのキーを使用し、DBレコード抽出
         // 更新対象の Wanted 情報を抽出し、保持する
