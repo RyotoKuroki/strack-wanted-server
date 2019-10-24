@@ -2,7 +2,7 @@ import $ from 'jquery';
 import { AbsRepository } from '../Abs.Repository';
 import IBingobookFetchRepository from './I.Bingobook.Fetch.Repository';
 import DataStore from '../../app.infras/infra.datastores/DataStore';
-import { TrWanted, PatchSpecifyKeys } from '../../app.entities/TrWanted';
+import { TrWanted } from '../../app.entities/TrWanted';
 import { EntityEnabledStatesConsts } from '../../app.consts/states/states.entity.enabled';
 
 export class BingobookFetchRepository extends AbsRepository implements IBingobookFetchRepository {
@@ -79,47 +79,3 @@ export class BingobookFetchRepository extends AbsRepository implements IBingoboo
         });
     }
 }
-/*
-/**
- * 抽出条件に見合うデータが存在しない場合のエラー
- * /
-export class NotFoundSuchWantedError extends Error {
-    public code: string;
-    public message: string;
-    public stack?: string;
-    constructor(code: string, message: string, stack?: string) {
-        super();
-        this.code = code;
-        this.message = message;
-        this.stack = stack;
-    }
-}
-
-/**
- * 更新処理失敗時のエラー
- * /
-export class CouldNotUpdateError extends Error {
-    public code: string;
-    public message: string;
-    public stack?: string;
-    constructor(code: string, message: string, stack?: string) {
-        super();
-        this.code = code;
-        this.message = message;
-        this.stack = stack;
-    }
-}
-
-/**
- * データの登録・更新時に必要なキー情報。
- * 現状は。情報を特定するための uuid と、バージョン管理のための revision。
- * /
-export class PatchSpecifyKeys {
-    public readonly uuid!: string;
-    public readonly revision!: number;
-    constructor(uuid: string, revision: number) {
-        this.uuid = uuid;
-        this.revision = revision;
-    }
-}
-*/

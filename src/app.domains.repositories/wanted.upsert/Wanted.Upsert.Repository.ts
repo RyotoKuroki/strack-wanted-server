@@ -56,6 +56,8 @@ export class WantedUpsertRepository extends AbsRepository implements IWantedUpse
         prize_money: number,
         warning: string,
         image_base64: string): Promise<any> {
+        
+        this._Wanted.whois = whois;
         this._Wanted.name = name;
         this._Wanted.prize_money = prize_money;
         this._Wanted.warning = warning;
@@ -80,10 +82,6 @@ export class WantedUpsertRepository extends AbsRepository implements IWantedUpse
             this._Wanted.image_base64 = this._Wanted.image_base64;
             await this._DataStore.Insert(TrWanted, this._Wanted);
         } else {
-            this._Wanted.name = this._Wanted.name;
-            this._Wanted.prize_money = this._Wanted.prize_money;
-            this._Wanted.warning = this._Wanted.warning;
-            this._Wanted.image_base64 = this._Wanted.image_base64;
             this._Wanted.revision = ++this._Wanted.revision;
             await this._DataStore.Update(this._Wanted);
         }
@@ -131,47 +129,3 @@ export class WantedUpsertRepository extends AbsRepository implements IWantedUpse
         });
     }
 }
-/*
-/**
- * 抽出条件に見合うデータが存在しない場合のエラー
- * /
-export class NotFoundSuchWantedError extends Error {
-    public code: string;
-    public message: string;
-    public stack?: string;
-    constructor(code: string, message: string, stack?: string) {
-        super();
-        this.code = code;
-        this.message = message;
-        this.stack = stack;
-    }
-}
-
-/**
- * 更新処理失敗時のエラー
- * /
-export class CouldNotUpdateError extends Error {
-    public code: string;
-    public message: string;
-    public stack?: string;
-    constructor(code: string, message: string, stack?: string) {
-        super();
-        this.code = code;
-        this.message = message;
-        this.stack = stack;
-    }
-}
-
-/**
- * データの登録・更新時に必要なキー情報。
- * 現状は。情報を特定するための uuid と、バージョン管理のための revision。
- * /
-export class PatchSpecifyKeys {
-    public readonly uuid!: string;
-    public readonly revision!: number;
-    constructor(uuid: string, revision: number) {
-        this.uuid = uuid;
-        this.revision = revision;
-    }
-}
-*/

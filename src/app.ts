@@ -6,7 +6,7 @@ import routes from './routes';
 const app = express();
 
 app.use(bodyParser.urlencoded({
-    limit: '5mb',
+    limit: '3mb',
     extended: true,
 }));
 app.use('/', routes);

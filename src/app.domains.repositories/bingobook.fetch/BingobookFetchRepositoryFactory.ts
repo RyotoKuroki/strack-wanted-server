@@ -1,4 +1,3 @@
-import IBingobookFetchRepository from "./I.Bingobook.Fetch.Repository";
 import { BingobookFetchRepository } from "./Bingobook.Fetch.Repository";
 import { AbsRepositoryFactory } from "../Abs.Repository.Factory";
 import DataStore from "../../app.infras/infra.datastores/DataStore";

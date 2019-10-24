@@ -2,11 +2,10 @@ import { AbsRepositoryFactory } from '../app.domains.repositories/Abs.Repository
 import { WantedDoneRepositoryFactory } from '../app.domains.repositories/wanted.done/WantedDoneRepositoryFactory';
 import { WantedDoneRepository } from '../app.domains.repositories/wanted.done/Wanted.Done.Repository';
 import WantedDoneDomain from '../app.domains/Wanted.Done.Domain';
-import { TrWanted } from '../app.entities/TrWanted';
 
 export default class WantedsDone {
 
-    public async Save(req, res, next) {
+    public async Done(req, res, next) {
         
         const params = req.body;
         const dto = {

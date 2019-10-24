@@ -1,4 +1,3 @@
-// import { BingobookFetchRepository } from "../../app.domains.repositories/bingobook.fetch/Bingobook.Fetch.Repository";
 import IBingobookFetchRepository from "../app.domains.repositories/bingobook.fetch/I.Bingobook.Fetch.Repository";
 
 export default class BingobookFetchDomain {

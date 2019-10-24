@@ -1,5 +1,3 @@
-import { PatchSpecifyKeys } from '../../app.entities/TrWanted';
-
 export default interface IBingobookFetchRepository {
     /**
      * DB検索。

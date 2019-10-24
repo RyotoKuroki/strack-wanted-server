@@ -14,10 +14,10 @@ router.post('/upsert-wanteds', (req, res, next) => {
     cors(req, res, () => new WantedsUpsert().Save(req, res, next));
 });
 router.post('/done-wanteds', (req, res, next) => {
-    cors(req, res, () => new WantedsDone().Save(req, res, next));
+    cors(req, res, () => new WantedsDone().Done(req, res, next));
 });
 router.post('/delete-wanteds', (req, res, next) => {
-    cors(req, res, () => new WantedsDelete().Delete(req, res, next));
+    cors(req, res, () => new WantedsDelete().Remove(req, res, next));
 });
 
 

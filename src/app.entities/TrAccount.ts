@@ -4,35 +4,22 @@ import uuid from 'node-uuid';
 
 @Entity()
 export class TrAccount extends BaseEntity implements ITR_Account {
-    /**
-     * サロゲートキー
-     */
+    /** サロゲートキー */
     @PrimaryGeneratedColumn()
     public uuid: string = '';
-    /**
-     * ユーザを表すキー
-     */
+    /** ユーザを表すキー */
     @Column({ length: 256 })
     public whois: string = '';
-    /**
-     * 情報の利用可否
-     * enable/disable
-     */
+    /** 情報の利用可否 enable/disable */
     @Column({ length: 256 })
     public enabled: string = 'enable';
-    /**
-     * バージョン
-     */
+    /** バージョン */
     @Column('double')
     public revision: number = 0;
-    /**
-     * ターゲット名
-     */
+    /** ターゲット名 */
     @Column({ length: 256 })
     public user_name: string = '';
-    /**
-     * ターゲットの画像
-     */
+    /** ターゲットの画像 */
     @Column('longtext')
     public image_base64: string = '';
 }

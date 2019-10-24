@@ -2,11 +2,10 @@ import { AbsRepositoryFactory } from '../app.domains.repositories/Abs.Repository
 import { WantedDeleteRepositoryFactory } from '../app.domains.repositories/wanted.delete/WantedDeleteRepositoryFactory';
 import { WantedDeleteRepository } from '../app.domains.repositories/wanted.delete/Wanted.Delete.Repository';
 import WantedDeleteDomain from '../app.domains/Wanted.Delete.Domain';
-import { TrWanted } from '../app.entities/TrWanted';
 
 export default class WantedsDelete {
 
-    public async Delete(req, res, next) {
+    public async Remove(req, res, next) {
         
         const params = req.body;
         const dto = {

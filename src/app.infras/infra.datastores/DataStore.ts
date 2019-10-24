@@ -14,13 +14,9 @@ export default class DataStore {
     /**
      * DB接続の下処理を実施。
      * トランザクション管理なし。
-     * @param entities 
+     * @param patch 
      */
-    public async Run(/*entities: Array<any>,*/ patch: (result: any) => Promise<any>): Promise<any> {
-        // const accessor = new Accessor();
-        // const config = AccessorConfig.GetConfig(entities);
-        // this._Accessor = await accessor.CreateConnection(config);
-
+    public async Run(patch: (result: any) => Promise<any>): Promise<any> {
         try {
             const result = await patch({});
             return result;
@@ -34,13 +30,9 @@ export default class DataStore {
     /**
      * DB接続の下処理のテンプレート。
      * トランザクション管理も合わせて実施。
-     * @param entities 
      * @param patchInTran 
      */
-    public async RunWithTransaction(/*entities: any[],*/ patchInTran: (result: any) => Promise<any>): Promise<any> {
-        // const accessor = new Accessor();
-        // const config = AccessorConfig.GetConfig(entities);
-        // this._Accessor = await accessor.CreateConnection(config);
+    public async RunWithTransaction(patchInTran: (result: any) => Promise<any>): Promise<any> {
         try {
             await this.Transaction();
             const result = await patchInTran({});
@@ -61,8 +53,6 @@ export default class DataStore {
     }
     /** upsert */
     public async Update(entity: any) {
-        // TrWanted.save(); のような方法でも、エンティティ情報のDB登録は可能だが、これだとトランザクション管理できない。
-        // そのため、QueryRunner を経由して save 処理を行うこととする。
         const result = await this._Accessor.QueryRunner.manager.save(entity);
         return result;
     }

@@ -4,8 +4,7 @@ import { EntityEnabledStatesConsts } from '../app.consts/states/states.entity.en
 
 export default class WantedDeleteDomain {
 
-    // TODO: static
-    // protected DoneStates = DoneStatesConsts();
+    // TODO: use static
     protected EntityEnabledStates = EntityEnabledStatesConsts();
 
     protected _WantedDeleteRepository!: IWantedDeleteRepository;
@@ -20,7 +19,7 @@ export default class WantedDeleteDomain {
         // 更新対象の Wanted 情報を抽出し、保持する
         const specifyKeys = new PatchSpecifyKeys(whois, wanted.uuid, wanted.revision);
         await this._WantedDeleteRepository.StoreWanted(specifyKeys);
-        // Enabled 変更
+        // 編集
         await this._WantedDeleteRepository.ChangeEnabledState(wanted.enabled === this.EntityEnabledStates.ENABLED);
         // DB更新
         await this._WantedDeleteRepository.Remove();
