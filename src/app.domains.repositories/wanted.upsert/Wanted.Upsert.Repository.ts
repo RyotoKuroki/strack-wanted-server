@@ -75,7 +75,7 @@ export class WantedUpsertRepository extends AbsRepository implements IWantedUpse
             this._Wanted.whois = this._Wanted.whois;
             this._Wanted.revision = 1;
             this._Wanted.enabled = this.EntityEnabledStates.ENABLED;
-            this._Wanted.done = this.DoneStates.DONE;
+            this._Wanted.done = this.DoneStates.YET;
             this._Wanted.name = this._Wanted.name;
             this._Wanted.prize_money = this._Wanted.prize_money;
             this._Wanted.warning = this._Wanted.warning;
