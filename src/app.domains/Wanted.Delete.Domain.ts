@@ -20,7 +20,7 @@ export default class WantedDeleteDomain {
         const specifyKeys = new PatchSpecifyKeys(whois, wanted.uuid, wanted.revision);
         await this._WantedDeleteRepository.StoreWanted(specifyKeys);
         // 編集
-        await this._WantedDeleteRepository.ChangeEnabledState(wanted.enabled === this.EntityEnabledStates.ENABLED);
+        await this._WantedDeleteRepository.ChangeEnabledState(false);
         // DB更新
         await this._WantedDeleteRepository.Remove();
         return this._WantedDeleteRepository;
