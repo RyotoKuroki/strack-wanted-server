@@ -1,6 +1,7 @@
 import IWantedUpsertRepository from "../app.domains.repositories/wanted.upsert/I.Wanted.Upsert.Repository";
-import { PatchSpecifyKeys, TrWanted } from '../app.entities/TrWanted';
+import { PatchSpecifyKeys } from '../app.entities/TrWanted';
 import { DoneStatesConsts } from '../app.consts/states/states.done';
+import ITR_Wanted from "strack-wanted-meta/src/entities/I.tr.wanted";
 
 export default class WantedUpsertDomain {
 
@@ -13,15 +14,15 @@ export default class WantedUpsertDomain {
         this._WantedUpsertRepository = wantedUpsertRepository;
     }
 
-    public async Upsert(whois: string, wanted: TrWanted): Promise<IWantedUpsertRepository> {
+    public async Upsert(wanted: ITR_Wanted): Promise<IWantedUpsertRepository> {
 
         // クライアントから受信した、Wanted 情報を特定するためのキーを使用し、DBレコード抽出
         // 更新対象の Wanted 情報を抽出し、保持する
-        const specifyKeys = new PatchSpecifyKeys(whois, wanted.uuid, wanted.revision);
+        const specifyKeys = new PatchSpecifyKeys(wanted.whois, wanted.uuid, wanted.revision);
         await this._WantedUpsertRepository.StoreWanted(specifyKeys);
         // 編集
         await this._WantedUpsertRepository.Modify(
-            whois,
+            wanted.whois,
             wanted.name,
             wanted.prize_money,
             wanted.warning,

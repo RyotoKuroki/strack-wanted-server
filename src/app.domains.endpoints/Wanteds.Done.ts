@@ -2,13 +2,17 @@ import { AbsRepositoryFactory } from '../app.domains.repositories/Abs.Repository
 import { WantedDoneRepositoryFactory } from '../app.domains.repositories/wanted.done/WantedDoneRepositoryFactory';
 import { WantedDoneRepository } from '../app.domains.repositories/wanted.done/Wanted.Done.Repository';
 import WantedDoneDomain from '../app.domains/Wanted.Done.Domain';
+import ITR_Wanted from 'strack-wanted-meta/src/entities/I.tr.wanted';
 
 export default class WantedsDone {
 
     public async Done(req, res, next) {
         
         const params = req.body;
-        const dto = {
+        const dto: {
+            whois: string,
+            wanted: ITR_Wanted
+        } = {
             whois: params.whois,
             wanted: params.wanteds[0],
         };
@@ -17,7 +21,7 @@ export default class WantedsDone {
         wantedDoneRepository.RunWithTran(async (result: any) => {
 
             const wantedDoneDomain = new WantedDoneDomain(wantedDoneRepository);
-            await wantedDoneDomain.Done(dto.whois, dto.wanted);
+            await wantedDoneDomain.Done(dto.whois, dto.wanted.uuid, dto.wanted.revision, dto.wanted.done);
             result.target = wantedDoneRepository.StoredWanted;
             return result;
         })

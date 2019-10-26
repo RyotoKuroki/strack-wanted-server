@@ -39,19 +39,12 @@ export class WantedDeleteRepository extends AbsRepository implements IWantedDele
         });
         return this;
     }
-    /**
-     * Wanted 情報を編集
-     * @param enabled 
-     */
-    public /* override */ async ChangeEnabledState(enabled: boolean): Promise<any> {
-        this._Wanted.enabled = enabled ? this.EntityEnabledStates.ENABLED : this.EntityEnabledStates.DISABLED;
-        return this;
-    }
 
     /**
      * Wanted 情報を更新（論理削除）
      */
     public /* override */ async Remove(): Promise<any> {
+        this._Wanted.enabled = this.EntityEnabledStates.DISABLED;
         this._Wanted = await this._DataStore.Update(this._Wanted);
         return this;
     }
