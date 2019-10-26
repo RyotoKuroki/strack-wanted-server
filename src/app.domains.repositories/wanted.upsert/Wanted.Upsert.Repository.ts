@@ -3,14 +3,11 @@ import { AbsRepository } from '../Abs.Repository';
 import IWantedUpsertRepository from './I.Wanted.Upsert.Repository';
 import DataStore from '../../app.infras/infra.datastores/DataStore';
 import { TrWanted, PatchSpecifyKeys } from '../../app.entities/TrWanted';
-import { EntityEnabledStatesConsts } from '../../app.consts/states/states.entity.enabled';
-import { DoneStatesConsts } from '../../app.consts/states/states.done';
+import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
+import { DoneStates } from 'strack-wanted-meta/dist/consts/states/states.done';
 import uuid from 'node-uuid';
 
 export class WantedUpsertRepository extends AbsRepository implements IWantedUpsertRepository {
-
-    protected EntityEnabledStates = EntityEnabledStatesConsts();
-    protected DoneStates = DoneStatesConsts();
 
     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // @@@@@@ override AbsWantedDoneRepository @@@@@@
@@ -74,8 +71,8 @@ export class WantedUpsertRepository extends AbsRepository implements IWantedUpse
             this._Wanted.uuid = `${uuid.v4()}-${Date.now()}`;
             this._Wanted.whois = this._Wanted.whois;
             this._Wanted.revision = 1;
-            this._Wanted.enabled = this.EntityEnabledStates.ENABLED;
-            this._Wanted.done = this.DoneStates.YET;
+            this._Wanted.enabled = EntityEnableStates.ENABLE;
+            this._Wanted.done = DoneStates.YET;
             this._Wanted.name = this._Wanted.name;
             this._Wanted.prize_money = this._Wanted.prize_money;
             this._Wanted.warning = this._Wanted.warning;

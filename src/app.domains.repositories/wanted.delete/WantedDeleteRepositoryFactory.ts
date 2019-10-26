@@ -1,4 +1,3 @@
-import IWantedDeleteRepository from "./I.Wanted.Delete.Repository";
 import { WantedDeleteRepository } from "./Wanted.Delete.Repository";
 import { AbsRepositoryFactory } from "../Abs.Repository.Factory";
 import DataStore from "../../app.infras/infra.datastores/DataStore";

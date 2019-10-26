@@ -1,4 +1,3 @@
-import IWantedDoneRepository from "./I.Wanted.Done.Repository";
 import { WantedDoneRepository } from "./Wanted.Done.Repository";
 import { AbsRepositoryFactory } from "../Abs.Repository.Factory";
 import DataStore from "../../app.infras/infra.datastores/DataStore";

@@ -3,6 +3,7 @@ import WantedsGet from './app.domains.endpoints/Bingobook.Fetch';
 import WantedsDelete from './app.domains.endpoints/Wanteds.Delete';
 import WantedsUpsert from './app.domains.endpoints/Wanteds.Upsert';
 import WantedsDone from './app.domains.endpoints/Wanteds.Done';
+import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
 
 const cors = require('cors')({Origin: true});
 const router = express.Router();
@@ -26,7 +27,8 @@ router.get('/', (req, res, next) => {
     cors(req, res, () => {
         // return res.send('Hello rest-world!');
         return res.json({
-            success: true
+            success: true,
+            test: EntityEnableStates.DISABLE
         });
     });
 });

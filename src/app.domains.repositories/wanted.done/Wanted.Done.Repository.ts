@@ -3,11 +3,9 @@ import { AbsRepository } from '../Abs.Repository';
 import IWantedDoneRepository from './I.Wanted.Done.Repository';
 import DataStore from '../../app.infras/infra.datastores/DataStore';
 import { TrWanted, PatchSpecifyKeys } from '../../app.entities/TrWanted';
-import { DoneStatesConsts } from '../../app.consts/states/states.done';
+import { DoneStates } from 'strack-wanted-meta/dist/consts/states/states.done';
 
 export class WantedDoneRepository extends AbsRepository implements IWantedDoneRepository {
-
-    protected DoneStates = DoneStatesConsts();
 
     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // @@@@@@ override AbsWantedDoneRepository @@@@@@
@@ -46,7 +44,7 @@ export class WantedDoneRepository extends AbsRepository implements IWantedDoneRe
      * @param done 
      */
     public /* override */ async ChangeDoneState(done: boolean): Promise<any> {
-        this._Wanted.done = done ? this.DoneStates.DONE : this.DoneStates.YET;
+        this._Wanted.done = done ? DoneStates.DONE : DoneStates.YET;
         return this;
     }
 

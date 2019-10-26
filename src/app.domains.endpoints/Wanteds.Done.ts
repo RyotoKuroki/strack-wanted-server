@@ -2,7 +2,7 @@ import { AbsRepositoryFactory } from '../app.domains.repositories/Abs.Repository
 import { WantedDoneRepositoryFactory } from '../app.domains.repositories/wanted.done/WantedDoneRepositoryFactory';
 import { WantedDoneRepository } from '../app.domains.repositories/wanted.done/Wanted.Done.Repository';
 import WantedDoneDomain from '../app.domains/Wanted.Done.Domain';
-import ITR_Wanted from 'strack-wanted-meta/src/entities/I.tr.wanted';
+import ITR_Wanted from 'strack-wanted-meta/dist/entities/I.tr.wanted';
 
 export default class WantedsDone {
 

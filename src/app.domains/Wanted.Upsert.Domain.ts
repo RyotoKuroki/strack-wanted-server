@@ -1,12 +1,8 @@
 import IWantedUpsertRepository from "../app.domains.repositories/wanted.upsert/I.Wanted.Upsert.Repository";
 import { PatchSpecifyKeys } from '../app.entities/TrWanted';
-import { DoneStatesConsts } from '../app.consts/states/states.done';
-import ITR_Wanted from "strack-wanted-meta/src/entities/I.tr.wanted";
+import ITR_Wanted from "strack-wanted-meta/dist/entities/I.tr.wanted";
 
 export default class WantedUpsertDomain {
-
-    // TODO: use static
-    protected DoneStates = DoneStatesConsts();
 
     protected _WantedUpsertRepository!: IWantedUpsertRepository;
 

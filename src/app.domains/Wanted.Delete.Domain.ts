@@ -1,11 +1,7 @@
 import IWantedDeleteRepository from "../app.domains.repositories/wanted.delete/I.Wanted.Delete.Repository";
-import { PatchSpecifyKeys, TrWanted } from '../app.entities/TrWanted';
-import { EntityEnabledStatesConsts } from '../app.consts/states/states.entity.enabled';
+import { PatchSpecifyKeys } from '../app.entities/TrWanted';
 
 export default class WantedDeleteDomain {
-
-    // TODO: use static
-    protected EntityEnabledStates = EntityEnabledStatesConsts();
 
     protected _WantedDeleteRepository!: IWantedDeleteRepository;
 

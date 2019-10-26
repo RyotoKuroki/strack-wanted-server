@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm'
-import ITR_Wanted from 'strack-wanted-meta/src/entities/I.tr.wanted';
+import ITR_Wanted from 'strack-wanted-meta/dist/entities/I.tr.wanted';
 import uuid from 'node-uuid';
 
 @Entity()

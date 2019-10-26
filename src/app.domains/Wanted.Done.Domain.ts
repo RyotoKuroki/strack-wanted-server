@@ -1,11 +1,8 @@
 import IWantedDoneRepository from "../app.domains.repositories/wanted.done/I.Wanted.Done.Repository";
 import { PatchSpecifyKeys, TrWanted } from '../app.entities/TrWanted';
-import { DoneStatesConsts } from '../app.consts/states/states.done';
+import { DoneStates } from 'strack-wanted-meta/dist/consts/states/states.done';
 
 export default class WantedDoneDomain {
-
-    // TODO: use static
-    protected DoneStates = DoneStatesConsts();
 
     protected _WantedDoneRepository!: IWantedDoneRepository;
 
@@ -20,7 +17,7 @@ export default class WantedDoneDomain {
         const specifyKeys = new PatchSpecifyKeys(whois, uuid, revision);
         await this._WantedDoneRepository.StoreWanted(specifyKeys);
         // 編集
-        await this._WantedDoneRepository.ChangeDoneState(done === this.DoneStates.DONE);
+        await this._WantedDoneRepository.ChangeDoneState(done === DoneStates.DONE);
         // DB更新
         await this._WantedDoneRepository.UpdateDone();
         return this._WantedDoneRepository;

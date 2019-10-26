@@ -3,11 +3,9 @@ import { AbsRepository } from '../Abs.Repository';
 import IWantedDeleteRepository from './I.Wanted.Delete.Repository';
 import DataStore from '../../app.infras/infra.datastores/DataStore';
 import { TrWanted, PatchSpecifyKeys } from '../../app.entities/TrWanted';
-import { EntityEnabledStatesConsts } from '../../app.consts/states/states.entity.enabled';
+import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
 
 export class WantedDeleteRepository extends AbsRepository implements IWantedDeleteRepository {
-
-    protected EntityEnabledStates = EntityEnabledStatesConsts();
 
     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // @@@@@@ override AbsWantedDoneRepository @@@@@@
@@ -44,7 +42,7 @@ export class WantedDeleteRepository extends AbsRepository implements IWantedDele
      * Wanted 情報を更新（論理削除）
      */
     public /* override */ async Remove(): Promise<any> {
-        this._Wanted.enabled = this.EntityEnabledStates.DISABLED;
+        this._Wanted.enabled = EntityEnableStates.DISABLE;
         this._Wanted = await this._DataStore.Update(this._Wanted);
         return this;
     }

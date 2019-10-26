@@ -2,7 +2,7 @@ import { AbsRepositoryFactory } from '../app.domains.repositories/Abs.Repository
 import { WantedUpsertRepositoryFactory } from '../app.domains.repositories/wanted.upsert/WantedUpsertRepositoryFactory';
 import { WantedUpsertRepository } from '../app.domains.repositories/wanted.upsert/Wanted.Upsert.Repository';
 import WantedUpsertDomain from '../app.domains/Wanted.Upsert.Domain';
-import ITR_Wanted from 'strack-wanted-meta/src/entities/I.tr.wanted';
+import ITR_Wanted from 'strack-wanted-meta/dist/entities/I.tr.wanted';
 
 export default class WantedsUpsert {
 
