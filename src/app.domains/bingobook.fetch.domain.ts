@@ -1,4 +1,4 @@
-import IBingobookFetchRepository from "../app.domains.repositories/bingobook.fetch/I.Bingobook.Fetch.Repository";
+import IBingobookFetchRepository from "../app.domains.repositories/bingobook.fetch/I.bingobook.fetch.repository";
 
 export default class BingobookFetchDomain {
 

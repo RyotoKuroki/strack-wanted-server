@@ -1,5 +1,5 @@
-import IWantedDeleteRepository from "../app.domains.repositories/wanted.delete/I.Wanted.Delete.Repository";
-import { PatchSpecifyKeys } from '../app.entities/TrWanted';
+import IWantedDeleteRepository from "../app.domains.repositories/wanted.delete/I.wanted.delete.repository";
+import { PatchSpecifyKeys } from '../app.entities/tr.wanted';
 
 export default class WantedDeleteDomain {
 

@@ -1,7 +1,7 @@
-import { AbsRepositoryFactory } from '../app.domains.repositories/Abs.Repository.Factory';
-import { BingobookFetchRepositoryFactory } from '../app.domains.repositories/bingobook.fetch/BingobookFetchRepositoryFactory';
-import { BingobookFetchRepository } from '../app.domains.repositories/bingobook.fetch/Bingobook.Fetch.Repository';
-import BingobookFetchDomain from '../app.domains/Bingobook.Fetch.Domain';
+import { AbsRepositoryFactory } from '../app.domains.repositories/Abs.repository.factory';
+import { BingobookFetchRepositoryFactory } from '../app.domains.repositories/bingobook.fetch/bingobook.fetch.repository.factory';
+import { BingobookFetchRepository } from '../app.domains.repositories/bingobook.fetch/bingobook.fetch.repository';
+import BingobookFetchDomain from '../app.domains/bingobook.fetch.domain';
 
 export default class WantedsGet {
 

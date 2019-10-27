@@ -1,8 +1,8 @@
 import $ from 'jquery';
-import { AbsRepository } from '../Abs.Repository';
-import IBingobookFetchRepository from './I.Bingobook.Fetch.Repository';
-import DataStore from '../../app.infras/infra.datastores/DataStore';
-import { TrWanted } from '../../app.entities/TrWanted';
+import { AbsRepository } from '../Abs.repository';
+import IBingobookFetchRepository from './I.bingobook.fetch.repository';
+import DataStore from '../../app.infras/infra.datastores/datastore';
+import { TrWanted } from '../../app.entities/tr.wanted';
 import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
 
 export class BingobookFetchRepository extends AbsRepository implements IBingobookFetchRepository {

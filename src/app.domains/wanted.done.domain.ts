@@ -1,5 +1,5 @@
-import IWantedDoneRepository from "../app.domains.repositories/wanted.done/I.Wanted.Done.Repository";
-import { PatchSpecifyKeys, TrWanted } from '../app.entities/TrWanted';
+import IWantedDoneRepository from "../app.domains.repositories/wanted.done/I.wanted.done.repository";
+import { PatchSpecifyKeys, TrWanted } from '../app.entities/tr.wanted';
 import { DoneStates } from 'strack-wanted-meta/dist/consts/states/states.done';
 
 export default class WantedDoneDomain {

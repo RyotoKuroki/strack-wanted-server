@@ -1,6 +1,6 @@
 import { /*getConnectionOptions,*/ SelectQueryBuilder, getRepository, BaseEntity, createConnections, createConnection,/* BaseEntity,*/ Connection, QueryRunner, Repository, EntityManager, QueryBuilder, getConnection } from 'typeorm';
-import { TrWanted } from '../../../app.entities/TrWanted';
-import { TrAccount } from '../../../app.entities/TrAccount';
+import { TrWanted } from '../../../app.entities/tr.wanted';
+import { TrAccount } from '../../../app.entities/tr.account';
 import uuid from 'node-uuid';
 // import Logger from '../app.logger/Logger';
 

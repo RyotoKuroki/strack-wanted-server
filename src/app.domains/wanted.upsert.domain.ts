@@ -1,5 +1,5 @@
-import IWantedUpsertRepository from "../app.domains.repositories/wanted.upsert/I.Wanted.Upsert.Repository";
-import { PatchSpecifyKeys } from '../app.entities/TrWanted';
+import IWantedUpsertRepository from "../app.domains.repositories/wanted.upsert/I.wanted.upsert.repository";
+import { PatchSpecifyKeys } from '../app.entities/tr.wanted';
 import ITR_Wanted from "strack-wanted-meta/dist/entities/I.tr.wanted";
 
 export default class WantedUpsertDomain {

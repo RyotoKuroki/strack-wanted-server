@@ -1,8 +1,8 @@
 import express from 'express';
-import WantedsGet from './app.domains.endpoints/Bingobook.Fetch';
-import WantedsDelete from './app.domains.endpoints/Wanteds.Delete';
-import WantedsUpsert from './app.domains.endpoints/Wanteds.Upsert';
-import WantedsDone from './app.domains.endpoints/Wanteds.Done';
+import WantedsGet from './app.domains.endpoints/bingobook.fetch.endpoint';
+import WantedsDelete from './app.domains.endpoints/wanteds.delete.endpoint';
+import WantedsUpsert from './app.domains.endpoints/wanteds.upsert.endpoint';
+import WantedsDone from './app.domains.endpoints/wanteds.done.endpoint';
 import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
 
 const cors = require('cors')({Origin: true});

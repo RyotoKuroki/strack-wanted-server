@@ -1,6 +1,6 @@
-import { BingobookFetchRepository } from "./Bingobook.Fetch.Repository";
-import { AbsRepositoryFactory } from "../Abs.Repository.Factory";
-import DataStore from "../../app.infras/infra.datastores/DataStore";
+import { BingobookFetchRepository } from "./bingobook.fetch.repository";
+import { AbsRepositoryFactory } from "../Abs.repository.factory";
+import DataStore from "../../app.infras/infra.datastores/datastore";
 
 export class BingobookFetchRepositoryFactory extends AbsRepositoryFactory<BingobookFetchRepository> {
 

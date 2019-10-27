@@ -1,11 +1,13 @@
 import $ from 'jquery';
-import { AbsRepository } from '../Abs.Repository';
-import IWantedDoneRepository from './I.Wanted.Done.Repository';
-import DataStore from '../../app.infras/infra.datastores/DataStore';
-import { TrWanted, PatchSpecifyKeys } from '../../app.entities/TrWanted';
+import { AbsRepository } from '../Abs.repository';
+import IWantedUpsertRepository from './I.wanted.upsert.repository';
+import DataStore from '../../app.infras/infra.datastores/datastore';
+import { TrWanted, PatchSpecifyKeys } from '../../app.entities/tr.wanted';
+import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
 import { DoneStates } from 'strack-wanted-meta/dist/consts/states/states.done';
+import uuid from 'node-uuid';
 
-export class WantedDoneRepository extends AbsRepository implements IWantedDoneRepository {
+export class WantedUpsertRepository extends AbsRepository implements IWantedUpsertRepository {
 
     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // @@@@@@ override AbsWantedDoneRepository @@@@@@
@@ -28,33 +30,58 @@ export class WantedDoneRepository extends AbsRepository implements IWantedDoneRe
      * @param specifyKeys 
      */
     public /* override */ async StoreWanted(specifyKeys: PatchSpecifyKeys): Promise<any> {
-        this._Wanted = await TrWanted.findOneOrFail({
+        let one = await TrWanted.findOne({
             where: {
                 whois: specifyKeys.whois,
                 uuid: specifyKeys.uuid,
                 revision: specifyKeys.revision,
             }
         });
+        if(one === undefined) {
+            one = new TrWanted();
+        }
+        this._Wanted = one;
+        return this;
+    }
+    /**
+     * Wanted 情報を編集
+     * @param enabled 
+     */
+    public /* override */ async Modify(
+        whois: string,
+        name: string,
+        prize_money: number,
+        warning: string,
+        image_base64: string): Promise<any> {
+        
+        this._Wanted.whois = whois;
+        this._Wanted.name = name;
+        this._Wanted.prize_money = prize_money;
+        this._Wanted.warning = warning;
+        this._Wanted.image_base64 = image_base64;
         return this;
     }
 
     /**
-     * Done情報を更新
-     * @param specifyKeys 
-     * @param done 
+     * Wanted 情報を更新
      */
-    public /* override */ async ChangeDoneState(done: boolean): Promise<any> {
-        this._Wanted.done = done ? DoneStates.DONE : DoneStates.YET;
-        return this;
-    }
-
-    /**
-     * Done情報を更新
-     * @param specifyKeys 
-     * @param done 
-     */
-    public /* override */ async UpdateDone(): Promise<any> {
-        this._Wanted = await this._DataStore.Update(this._Wanted);
+    public /* override */ async Save(): Promise<any> {
+        if(this._Wanted.uuid === undefined ||
+           this._Wanted.uuid === '') {
+            this._Wanted.uuid = `${uuid.v4()}-${Date.now()}`;
+            this._Wanted.whois = this._Wanted.whois;
+            this._Wanted.revision = 1;
+            this._Wanted.enabled = EntityEnableStates.ENABLE;
+            this._Wanted.done = DoneStates.YET;
+            this._Wanted.name = this._Wanted.name;
+            this._Wanted.prize_money = this._Wanted.prize_money;
+            this._Wanted.warning = this._Wanted.warning;
+            this._Wanted.image_base64 = this._Wanted.image_base64;
+            await this._DataStore.Insert(TrWanted, this._Wanted);
+        } else {
+            this._Wanted.revision = ++this._Wanted.revision;
+            await this._DataStore.Update(this._Wanted);
+        }
         return this;
     }
 

@@ -1,4 +1,4 @@
-import { PatchSpecifyKeys } from '../../app.entities/TrWanted';
+import { PatchSpecifyKeys } from '../../app.entities/tr.wanted';
 
 export default interface IWantedDeleteRepository {
     /**

@@ -1,7 +1,7 @@
-import { AbsRepositoryFactory } from '../app.domains.repositories/Abs.Repository.Factory';
-import { WantedDeleteRepositoryFactory } from '../app.domains.repositories/wanted.delete/WantedDeleteRepositoryFactory';
-import { WantedDeleteRepository } from '../app.domains.repositories/wanted.delete/Wanted.Delete.Repository';
-import WantedDeleteDomain from '../app.domains/Wanted.Delete.Domain';
+import { AbsRepositoryFactory } from '../app.domains.repositories/Abs.repository.factory';
+import { WantedDeleteRepositoryFactory } from '../app.domains.repositories/wanted.delete/wanted.delete.repository.factory';
+import { WantedDeleteRepository } from '../app.domains.repositories/wanted.delete/wanted.delete.repository';
+import WantedDeleteDomain from '../app.domains/wanted.delete.domain';
 import ITR_Wanted from 'strack-wanted-meta/dist/entities/I.tr.wanted';
 
 export default class WantedsDelete {

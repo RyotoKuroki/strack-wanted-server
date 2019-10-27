@@ -1,6 +1,6 @@
-import { WantedDeleteRepository } from "./Wanted.Delete.Repository";
-import { AbsRepositoryFactory } from "../Abs.Repository.Factory";
-import DataStore from "../../app.infras/infra.datastores/DataStore";
+import { WantedDeleteRepository } from "./wanted.delete.repository";
+import { AbsRepositoryFactory } from "../Abs.repository.factory";
+import DataStore from "../../app.infras/infra.datastores/datastore";
 
 export class WantedDeleteRepositoryFactory extends AbsRepositoryFactory<WantedDeleteRepository> {
 

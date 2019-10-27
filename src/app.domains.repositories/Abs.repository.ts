@@ -1,4 +1,4 @@
-import DataStore from "../app.infras/infra.datastores/DataStore";
+import DataStore from "../app.infras/infra.datastores/datastore";
 
 export abstract class AbsRepository {
     /** DataStore生成する場合に実装 */

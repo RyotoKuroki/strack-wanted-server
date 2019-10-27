@@ -1,5 +1,5 @@
 import { createConnection, BaseEntity } from 'typeorm';
-import { TrWanted } from './app.entities/TrWanted';
+import { TrWanted } from './app.entities/tr.wanted';
 
 // ORM - TEST
 createConnection({

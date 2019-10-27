@@ -1,6 +1,6 @@
-import { WantedUpsertRepository } from "./Wanted.Upsert.Repository";
-import { AbsRepositoryFactory } from "../Abs.Repository.Factory";
-import DataStore from "../../app.infras/infra.datastores/DataStore";
+import { WantedUpsertRepository } from "./wanted.upsert.repository";
+import { AbsRepositoryFactory } from "../Abs.repository.factory";
+import DataStore from "../../app.infras/infra.datastores/datastore";
 
 export class WantedUpsertRepositoryFactory extends AbsRepositoryFactory<WantedUpsertRepository> {
 

@@ -1,11 +1,11 @@
 import $ from 'jquery';
-import { AbsRepository } from '../Abs.Repository';
-import IWantedDeleteRepository from './I.Wanted.Delete.Repository';
-import DataStore from '../../app.infras/infra.datastores/DataStore';
-import { TrWanted, PatchSpecifyKeys } from '../../app.entities/TrWanted';
-import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
+import { AbsRepository } from '../Abs.repository';
+import IWantedDoneRepository from './I.wanted.done.repository';
+import DataStore from '../../app.infras/infra.datastores/datastore';
+import { TrWanted, PatchSpecifyKeys } from '../../app.entities/tr.wanted';
+import { DoneStates } from 'strack-wanted-meta/dist/consts/states/states.done';
 
-export class WantedDeleteRepository extends AbsRepository implements IWantedDeleteRepository {
+export class WantedDoneRepository extends AbsRepository implements IWantedDoneRepository {
 
     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // @@@@@@ override AbsWantedDoneRepository @@@@@@
@@ -39,10 +39,21 @@ export class WantedDeleteRepository extends AbsRepository implements IWantedDele
     }
 
     /**
-     * Wanted 情報を更新（論理削除）
+     * Done情報を更新
+     * @param specifyKeys 
+     * @param done 
      */
-    public /* override */ async Remove(): Promise<any> {
-        this._Wanted.enabled = EntityEnableStates.DISABLE;
+    public /* override */ async ChangeDoneState(done: boolean): Promise<any> {
+        this._Wanted.done = done ? DoneStates.DONE : DoneStates.YET;
+        return this;
+    }
+
+    /**
+     * Done情報を更新
+     * @param specifyKeys 
+     * @param done 
+     */
+    public /* override */ async UpdateDone(): Promise<any> {
         this._Wanted = await this._DataStore.Update(this._Wanted);
         return this;
     }
