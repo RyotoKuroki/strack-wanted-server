@@ -1,5 +1,5 @@
 import { AbsRepository } from "./Abs.repository";
-import DataStore from "../app.infras/infra.datastores/datastore";
+import DataStore from "../app.infras/datastores/datastore.mysql";
 
 export abstract class AbsRepositoryFactory<T extends AbsRepository> {
     

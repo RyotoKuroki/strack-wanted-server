@@ -6,7 +6,7 @@ export default class WantedUpsertDomain {
 
     protected _WantedUpsertRepository!: IWantedUpsertRepository;
 
-    constructor(protected wantedUpsertRepository: IWantedUpsertRepository) {
+    constructor(wantedUpsertRepository: IWantedUpsertRepository) {
         this._WantedUpsertRepository = wantedUpsertRepository;
     }
 
@@ -14,7 +14,7 @@ export default class WantedUpsertDomain {
 
         // クライアントから受信した、Wanted 情報を特定するためのキーを使用し、DBレコード抽出
         // 更新対象の Wanted 情報を抽出し、保持する
-        const specifyKeys = new PatchSpecifyKeys(wanted.whois, wanted.uuid, wanted.revision);
+        const specifyKeys = new PatchSpecifyKeys(wanted.uuid, wanted.revision, wanted.whois);
         await this._WantedUpsertRepository.StoreWanted(specifyKeys);
         // 編集
         await this._WantedUpsertRepository.Modify(

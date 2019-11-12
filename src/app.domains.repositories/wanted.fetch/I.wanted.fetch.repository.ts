@@ -1,4 +1,4 @@
-export default interface IBingobookFetchRepository {
+export default interface IWantedFetchRepository {
     /**
      * DB検索。
      * Wanted情報を特定して、１件取得

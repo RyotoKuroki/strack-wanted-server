@@ -1,6 +1,6 @@
 import { WantedUpsertRepository } from "./wanted.upsert.repository";
 import { AbsRepositoryFactory } from "../Abs.repository.factory";
-import DataStore from "../../app.infras/infra.datastores/datastore";
+import DataStore from "../../app.infras/datastores/datastore.mysql";
 
 export class WantedUpsertRepositoryFactory extends AbsRepositoryFactory<WantedUpsertRepository> {
 

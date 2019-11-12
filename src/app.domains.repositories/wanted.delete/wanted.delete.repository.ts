@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { AbsRepository } from '../Abs.repository';
 import IWantedDeleteRepository from './I.wanted.delete.repository';
-import DataStore from '../../app.infras/infra.datastores/datastore';
+import DataStore from '../../app.infras/datastores/datastore.mysql';
 import { TrWanted, PatchSpecifyKeys } from '../../app.entities/tr.wanted';
 import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
 

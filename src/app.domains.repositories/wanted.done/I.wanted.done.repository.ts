@@ -15,5 +15,5 @@ export default interface IWantedDoneRepository {
     /**
      * DB更新
      */
-    UpdateDone(): Promise<any>;
+    Update(): Promise<any>;
 }

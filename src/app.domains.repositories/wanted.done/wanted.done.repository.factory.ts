@@ -1,6 +1,6 @@
 import { WantedDoneRepository } from "./wanted.done.repository";
 import { AbsRepositoryFactory } from "../Abs.repository.factory";
-import DataStore from "../../app.infras/infra.datastores/datastore";
+import DataStore from "../../app.infras/datastores/datastore.mysql";
 
 export class WantedDoneRepositoryFactory extends AbsRepositoryFactory<WantedDoneRepository> {
 

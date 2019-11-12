@@ -1,6 +1,6 @@
 import { WantedDeleteRepository } from "./wanted.delete.repository";
 import { AbsRepositoryFactory } from "../Abs.repository.factory";
-import DataStore from "../../app.infras/infra.datastores/datastore";
+import DataStore from "../../app.infras/datastores/datastore.mysql";
 
 export class WantedDeleteRepositoryFactory extends AbsRepositoryFactory<WantedDeleteRepository> {
 

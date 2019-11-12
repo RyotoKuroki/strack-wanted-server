@@ -1,5 +1,5 @@
-import Accessor from './datastore.accessors/accessor';
-import AccessorConfig from './datastore.accessors/accessor.config';
+import Accessor from './datastore.mysql.accessors/accessor.mysql';
+import AccessorConfig from './datastore.mysql.accessors/accessor.mysql.config';
 
 export default class DataStore {
 

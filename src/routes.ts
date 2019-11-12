@@ -1,5 +1,5 @@
 import express from 'express';
-import WantedsGet from './app.domains.endpoints/bingobook.fetch.endpoint';
+import WantedsGet from './app.domains.endpoints/wanted.fetch.endpoint';
 import WantedsDelete from './app.domains.endpoints/wanteds.delete.endpoint';
 import WantedsUpsert from './app.domains.endpoints/wanteds.upsert.endpoint';
 import WantedsDone from './app.domains.endpoints/wanteds.done.endpoint';

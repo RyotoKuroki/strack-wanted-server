@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { AbsRepository } from '../Abs.repository';
 import IWantedDoneRepository from './I.wanted.done.repository';
-import DataStore from '../../app.infras/infra.datastores/datastore';
+import DataStore from '../../app.infras/datastores/datastore.mysql';
 import { TrWanted, PatchSpecifyKeys } from '../../app.entities/tr.wanted';
 import { DoneStates } from 'strack-wanted-meta/dist/consts/states/states.done';
 
@@ -53,7 +53,7 @@ export class WantedDoneRepository extends AbsRepository implements IWantedDoneRe
      * @param specifyKeys 
      * @param done 
      */
-    public /* override */ async UpdateDone(): Promise<any> {
+    public /* override */ async Update(): Promise<any> {
         this._Wanted = await this._DataStore.Update(this._Wanted);
         return this;
     }

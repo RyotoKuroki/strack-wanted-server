@@ -1,11 +1,11 @@
 import $ from 'jquery';
 import { AbsRepository } from '../Abs.repository';
-import IBingobookFetchRepository from './I.bingobook.fetch.repository';
-import DataStore from '../../app.infras/infra.datastores/datastore';
+import IWantedFetchRepository from './I.wanted.fetch.repository';
+import DataStore from '../../app.infras/datastores/datastore.mysql';
 import { TrWanted } from '../../app.entities/tr.wanted';
 import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
 
-export class BingobookFetchRepository extends AbsRepository implements IBingobookFetchRepository {
+export class WantedFetchRepository extends AbsRepository implements IWantedFetchRepository {
 
     // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     // @@@@@@ override AbsWantedDoneRepository @@@@@@

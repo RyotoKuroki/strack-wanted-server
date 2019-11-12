@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { AbsRepository } from '../Abs.repository';
 import IWantedUpsertRepository from './I.wanted.upsert.repository';
-import DataStore from '../../app.infras/infra.datastores/datastore';
+import DataStore from '../../app.infras/datastores/datastore.mysql';
 import { TrWanted, PatchSpecifyKeys } from '../../app.entities/tr.wanted';
 import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
 import { DoneStates } from 'strack-wanted-meta/dist/consts/states/states.done';
@@ -54,7 +54,7 @@ export class WantedUpsertRepository extends AbsRepository implements IWantedUpse
         warning: string,
         image_base64: string): Promise<any> {
         
-        this._Wanted.whois = whois;
+        // this._Wanted.whois = whois;
         this._Wanted.name = name;
         this._Wanted.prize_money = prize_money;
         this._Wanted.warning = warning;
@@ -73,10 +73,10 @@ export class WantedUpsertRepository extends AbsRepository implements IWantedUpse
             this._Wanted.revision = 1;
             this._Wanted.enabled = EntityEnableStates.ENABLE;
             this._Wanted.done = DoneStates.YET;
-            this._Wanted.name = this._Wanted.name;
-            this._Wanted.prize_money = this._Wanted.prize_money;
-            this._Wanted.warning = this._Wanted.warning;
-            this._Wanted.image_base64 = this._Wanted.image_base64;
+            // this._Wanted.name = this._Wanted.name;
+            // this._Wanted.prize_money = this._Wanted.prize_money;
+            // this._Wanted.warning = this._Wanted.warning;
+            // this._Wanted.image_base64 = this._Wanted.image_base64;
             await this._DataStore.Insert(TrWanted, this._Wanted);
         } else {
             this._Wanted.revision = ++this._Wanted.revision;
