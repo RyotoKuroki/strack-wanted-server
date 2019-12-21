@@ -10,6 +10,7 @@ createConnection(config).then(async (conn: any) => {
     BaseEntity.useConnection(conn);
 
     const uuid = Date.now()+'';
+
     // save-test
     const hoge = new TrWanted();
     hoge.uuid = uuid;
@@ -20,11 +21,13 @@ createConnection(config).then(async (conn: any) => {
     hoge.warning = 'wa----n!';
     hoge.revision = 0;
     await hoge.save();
+
     // find-test
     const hoges = await TrWanted.find({
         where: { uuid: uuid }
     });
     console.log(JSON.stringify(hoges));
+
 }).catch((error: any) => {
     console.log(`error in connect : ${error}`);
 });
