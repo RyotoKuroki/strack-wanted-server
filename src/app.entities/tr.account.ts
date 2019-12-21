@@ -1,11 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm'
+import { Entity, Column, BaseEntity, PrimaryColumn } from 'typeorm'
 import ITR_Account from 'strack-wanted-meta/dist/entities/I.tr.account';
-import uuid from 'node-uuid';
 
 @Entity()
 export class TrAccount extends BaseEntity implements ITR_Account {
     /** サロゲートキー */
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn() /* or @PrimaryGeneratedColumn('uuid') */
     public uuid: string = '';
     /** ユーザを表すキー */
     @Column({ length: 256 })

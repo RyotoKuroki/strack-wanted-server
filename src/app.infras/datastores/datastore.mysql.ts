@@ -1,5 +1,6 @@
 import Accessor from './datastore.mysql.accessors/accessor.mysql';
 import AccessorConfig from './datastore.mysql.accessors/accessor.mysql.config';
+import { BaseEntity } from 'typeorm';
 
 export default class DataStore {
 
@@ -49,33 +50,81 @@ export default class DataStore {
     }
     /** begin tran */
     public async Transaction() {
-        return await this._Accessor.QueryRunner.startTransaction();
+        await this._Accessor.QueryRunner.startTransaction();
     }
-    /** upsert */
-    public async Update(entity: any) {
-        const result = await this._Accessor.QueryRunner.manager.save(entity);
-        return result;
-    }
-    /** upsert */
-    public async Insert(schema: any, values: any) {
+
+    /** insert */
+    public async Insert(schema: any, values: {[key: string]: any;}): Promise<number> {
         const builder = this._Accessor.QueryRunner.manager.createQueryBuilder();
         const result = await builder
         .insert()
         .into(schema)
         .values(values)
         .execute();
-        return result;
+        return result.raw.affectedRows;
+    }
+    /** update */
+    public async Update(schema: any, valuesEntity: {[key: string]: any;}, wheresEntity: {[key: string]: any;}): Promise<number> {
+        const builder = this._Accessor.QueryRunner.manager.createQueryBuilder();
+        const result = await builder
+        .update(schema)
+        .set(valuesEntity)
+        .whereEntity(wheresEntity)
+        .execute();
+        return result.raw.affectedRows;
+    }
+    /** delete（物理削除） */
+    public async Delete(schema: any, wheresEntity: {[key: string]: any;}): Promise<number> {
+        const builder = this._Accessor.QueryRunner.manager.createQueryBuilder();
+        const result = await builder
+        .delete()
+        .from(schema)
+        .where(wheresEntity)
+        .execute();
+        return result.raw.affectedRows;
+    }
+    /** some query */
+    public async PatchManually(patch: (queryBuilder: any) => void): Promise<any> {
+        const builder = this._Accessor.QueryRunner.manager.createQueryBuilder();
+        return await patch(builder);
+    }
+
+    /**
+     * 想定内の件数が更新できたか？
+     * 実際の登録/更新件数↔想定件数とで異なる場合、スローエラー。
+     * 
+     * @param affectedRows 実際の更新件数
+     * @param expectedRows 想定の更新件数
+     */
+    public ThrowErrorNotExpectedAffectedRowsCount (affectedRows: number, expectedRows: number) {
+        if (affectedRows !== expectedRows) {
+            console.log(`@エラー： 実際の更新件数と想定件数が一致しませんでした。 : affect=${affectedRows}, expect=${expectedRows}`);
+            throw new Error(`Error at commitment. Affected-row's count is not expected.`);
+        }
+    }
+
+    /**
+     * 情報の更新に必要なキーで検索した際、データが取得できなかった場合、スローエラー。
+     * 
+     * @param someEntity 取得結果のエンティティ
+     * @param specifyKeys 検索時のキー
+     */
+    public ThrowErrorNotFoundSpecifyKeysInfo (someEntity: BaseEntity | undefined, specifyKeys: any) {
+        if (someEntity === null || someEntity === undefined) {
+            console.log(`@エラー： 該当のキーを有する情報が見つかりませんでした。 : keys=${JSON.stringify(specifyKeys)}`);
+            throw new Error(`Error at Fetch entity. Entity not found.`);
+        }
     }
     /** commit */
     public async Commit() {
-        return await this._Accessor.QueryRunner.commitTransaction();
+        await this._Accessor.QueryRunner.commitTransaction();
     }
     /** rollback */
     public async Rollback() {
-        return await this._Accessor.QueryRunner.rollbackTransaction();
+        await this._Accessor.QueryRunner.rollbackTransaction();
     }
     /** release */
     public async Release() {
-        return await this._Accessor.QueryRunner.release();
+        await this._Accessor.QueryRunner.release();
     }
 }

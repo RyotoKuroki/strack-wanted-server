@@ -28,13 +28,10 @@ export class WantedDeleteRepository extends AbsRepository implements IWantedDele
      * @param specifyKeys 
      */
     public /* override */ async StoreWanted(specifyKeys: PatchSpecifyKeys): Promise<any> {
-        this._Wanted = await TrWanted.findOneOrFail({
-            where: {
-                whois: specifyKeys.whois,
-                uuid: specifyKeys.uuid,
-                revision: specifyKeys.revision,
-            }
-        });
+        const conditions = { whois: specifyKeys.whois, uuid: specifyKeys.uuid, revision: specifyKeys.revision };
+        const temp = await TrWanted.findOne({ where: conditions });
+        this._DataStore.ThrowErrorNotFoundSpecifyKeysInfo(temp, conditions);
+        this._Wanted = temp!;
         return this;
     }
 
@@ -42,8 +39,15 @@ export class WantedDeleteRepository extends AbsRepository implements IWantedDele
      * Wanted 情報を更新（論理削除）
      */
     public /* override */ async Remove(): Promise<any> {
+        const revisionOld = this._Wanted.revision;
+        this._Wanted.revision += 1;
         this._Wanted.enabled = EntityEnableStates.DISABLE;
-        this._Wanted = await this._DataStore.Update(this._Wanted);
+        const affectedRows = await this._DataStore.Update(TrWanted, this._Wanted, {
+            uuid: this._Wanted.uuid,
+            revision: revisionOld,
+        });
+        this._DataStore.ThrowErrorNotExpectedAffectedRowsCount(affectedRows, 1);
+        this.StoreWanted(new PatchSpecifyKeys(this._Wanted.uuid, this._Wanted.revision, this._Wanted.whois));
         return this;
     }
 

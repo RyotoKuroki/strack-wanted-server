@@ -30,17 +30,18 @@ export class WantedUpsertRepository extends AbsRepository implements IWantedUpse
      * @param specifyKeys 
      */
     public /* override */ async StoreWanted(specifyKeys: PatchSpecifyKeys): Promise<any> {
-        let one = await TrWanted.findOne({
-            where: {
-                whois: specifyKeys.whois,
-                uuid: specifyKeys.uuid,
-                revision: specifyKeys.revision,
-            }
-        });
-        if(one === undefined) {
-            one = new TrWanted();
+        if (specifyKeys.uuid === '') {
+            // new
+            this._Wanted = new TrWanted();
+            this._Wanted.uuid = '';
+            this._Wanted.whois = specifyKeys.whois;
+        } else {
+            // modify
+            const conditions = { whois: specifyKeys.whois, uuid: specifyKeys.uuid, revision: specifyKeys.revision };
+            const temp = await TrWanted.findOne({ where: conditions });
+            this._DataStore.ThrowErrorNotFoundSpecifyKeysInfo(temp, conditions);
+            this._Wanted = temp!;
         }
-        this._Wanted = one;
         return this;
     }
     /**
@@ -53,8 +54,7 @@ export class WantedUpsertRepository extends AbsRepository implements IWantedUpse
         prize_money: number,
         warning: string,
         image_base64: string): Promise<any> {
-        
-        // this._Wanted.whois = whois;
+        this._Wanted.whois = whois;
         this._Wanted.name = name;
         this._Wanted.prize_money = prize_money;
         this._Wanted.warning = warning;
@@ -66,22 +66,23 @@ export class WantedUpsertRepository extends AbsRepository implements IWantedUpse
      * Wanted 情報を更新
      */
     public /* override */ async Save(): Promise<any> {
-        if(this._Wanted.uuid === undefined ||
-           this._Wanted.uuid === '') {
+        if(this._Wanted.uuid === '') {
             this._Wanted.uuid = `${uuid.v4()}-${Date.now()}`;
-            this._Wanted.whois = this._Wanted.whois;
             this._Wanted.revision = 1;
             this._Wanted.enabled = EntityEnableStates.ENABLE;
             this._Wanted.done = DoneStates.YET;
-            // this._Wanted.name = this._Wanted.name;
-            // this._Wanted.prize_money = this._Wanted.prize_money;
-            // this._Wanted.warning = this._Wanted.warning;
-            // this._Wanted.image_base64 = this._Wanted.image_base64;
-            await this._DataStore.Insert(TrWanted, this._Wanted);
+            const affectedRows = await this._DataStore.Insert(TrWanted, this._Wanted);
+            this._DataStore.ThrowErrorNotExpectedAffectedRowsCount(affectedRows, 1);
         } else {
-            this._Wanted.revision = ++this._Wanted.revision;
-            await this._DataStore.Update(this._Wanted);
+            const revisionOld = this._Wanted.revision;
+            this._Wanted.revision += 1;
+            const affectedRows = await this._DataStore.Update(TrWanted, this._Wanted, {
+                uuid: this._Wanted.uuid,
+                revision: revisionOld,
+            });
+            this._DataStore.ThrowErrorNotExpectedAffectedRowsCount(affectedRows, 1);
         }
+        this.StoreWanted(new PatchSpecifyKeys(this._Wanted.uuid, this._Wanted.revision, this._Wanted.whois));
         return this;
     }
 

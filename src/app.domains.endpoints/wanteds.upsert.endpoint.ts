@@ -33,9 +33,9 @@ export default class WantedsUpsert {
             }));
         })
         .catch(async (error: any) => {
-            throw new Error(JSON.stringify({
+            return res.send(JSON.stringify({
                 success: false,
-                reason: error
+                error: error
             }));
         });
     }

@@ -24,7 +24,6 @@ export class WantedFetchRepository extends AbsRepository implements IWantedFetch
 
     /**
      * DB検索。
-     * Wanted情報を特定して、１件取得
      * @param specifyKeys 
      */
     public /* override */ async StoreWanteds(whois: string): Promise<any> {
