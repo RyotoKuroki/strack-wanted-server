@@ -14,7 +14,7 @@ export default class AccessorConfig {
             username: {USER_NAME},
             password: {PASSWORD},
             database: {DATABASE_NAME},
-            entities: ss
+            entities: schemas
         };
     }
 }
