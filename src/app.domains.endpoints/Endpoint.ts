@@ -34,7 +34,6 @@ export default abstract class Endpoint {
             await this.OnSuccess(mainResult);
 
         } catch (e) {
-            //throw e;
             console.log(`@error in ExecTempMethod : ${e.message}`);
             await this.OnFail(e);
         }
