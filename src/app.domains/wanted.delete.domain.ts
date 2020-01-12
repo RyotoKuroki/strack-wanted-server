@@ -1,6 +1,7 @@
 import { TrWanted } from '../app.entities/tr.wanted';
 import DataStore from "../app.infras/datastores/datastore.mysql";
 import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
+import EntityMerge from '../app.infras/datastores/datastore.libs/datastore.entity.merge';
 
 export default class WantedDeleteDomain {
 
@@ -22,7 +23,7 @@ export default class WantedDeleteDomain {
         const rev = Number(wanted.revision);
         // ■削除時の抽出条件
         const conditions: { [key: string]: any } = {};
-        TrWanted.MergeArray2Entity([
+        EntityMerge.Array2Entity([
             wanted.whois,
             wanted.uuid,
             rev,
@@ -33,7 +34,7 @@ export default class WantedDeleteDomain {
         ]);
         // ■削除（更新）時の設定値
         const values: { [key: string]: any } = {};
-        TrWanted.MergeArray2Entity([
+        EntityMerge.Array2Entity([
             rev + 1,
             EntityEnableStates.DISABLE,
         ], values, [
@@ -50,7 +51,7 @@ export default class WantedDeleteDomain {
         const rev = Number(wanted.revision);
         // ▽更新後のデータ再取得
         const conditions: { [key: string]: any } = {};
-        TrWanted.MergeArray2Entity([
+        EntityMerge.Array2Entity([
             wanted.whois,
             wanted.uuid,
             rev + 1,

@@ -2,6 +2,7 @@ import DataStore from "../app.infras/datastores/datastore.mysql";
 import { TrWanted } from '../app.entities/tr.wanted';
 import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
 import { v4 as uuidv } from 'uuid';
+import EntityMerge from "../app.infras/datastores/datastore.libs/datastore.entity.merge";
 
 export default class WantedUpsertDomain {
 
@@ -54,13 +55,13 @@ export default class WantedUpsertDomain {
             this.FIELD_WARNING,
             this.FIELD_DONE,
         ];
-        TrWanted.MergeArray2Entity(src, values, fields);
+        EntityMerge.Array2Entity(src, values, fields);
         const affectedRows = await this._DataStore.Insert(TrWanted, values);
         this._DataStore.ThrowErrorNotExpectedAffectedRowsCount(affectedRows, 1);
 
         // Fetch ように値設定
         const wanted4fetch = new TrWanted();
-        TrWanted.MergeArray2Entity(src, wanted4fetch, fields);
+        EntityMerge.Array2Entity(src, wanted4fetch, fields);
         return { wanted: wanted4fetch };
     }
 
@@ -69,7 +70,7 @@ export default class WantedUpsertDomain {
         const rev = Number(wanted.revision);
         // ■更新時の抽出条件
         const conditions: { [key: string]: any } = {};
-        TrWanted.MergeArray2Entity([
+        EntityMerge.Array2Entity([
             wanted.whois,
             wanted.uuid,
             rev,
@@ -80,7 +81,7 @@ export default class WantedUpsertDomain {
         ]);
         // ■更新（更新）時の設定値
         const values: { [key: string]: any } = {};
-        TrWanted.MergeArray2Entity([
+        EntityMerge.Array2Entity([
             rev + 1,
             wanted.name,
             wanted.prize_money,
@@ -102,7 +103,7 @@ export default class WantedUpsertDomain {
         const rev = Number(revision);
         // ▽更新後のデータ再取得
         const conditions: { [key: string]: any } = {};
-        TrWanted.MergeArray2Entity([
+        EntityMerge.Array2Entity([
             whois,
             uuid,
             rev + 1,

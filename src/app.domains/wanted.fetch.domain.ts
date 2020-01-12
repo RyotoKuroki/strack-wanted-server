@@ -1,5 +1,6 @@
 import { TrWanted } from "../app.entities/tr.wanted";
 import DataStore from "../app.infras/datastores/datastore.mysql";
+import EntityMerge from "../app.infras/datastores/datastore.libs/datastore.entity.merge";
 
 export default class WantedFetchDomain {
 
@@ -20,7 +21,7 @@ export default class WantedFetchDomain {
 
         // ■抽出条件
         const conditions: { [key: string]: any } = {};
-        TrWanted.MergeArray2Entity([ whois, enabled, ], conditions, [
+        EntityMerge.Array2Entity([ whois, enabled, ], conditions, [
             this.FIELD_WHOIS,
             this.FIELD_ENABLED,
         ]);
@@ -32,7 +33,7 @@ export default class WantedFetchDomain {
         
         // ■抽出条件
         const conditions: { [key: string]: any } = {};
-        TrWanted.MergeArray2Entity([ whois, uuid, revision, enabled, ], conditions, [
+        EntityMerge.Array2Entity([ whois, uuid, revision, enabled, ], conditions, [
             this.FIELD_WHOIS,
             this.FIELD_UUID,
             this.FIELD_REVISION,
