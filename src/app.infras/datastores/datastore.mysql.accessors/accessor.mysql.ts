@@ -4,7 +4,8 @@ import { createConnection,Connection, QueryRunner } from 'typeorm';
 export default class Accessor {
 
     /** DB接続 */
-    protected static _ConnectionPool: Connection;
+    protected _ConnectionPool!: Connection;
+    public get ConnectionPool(): Connection { return this._ConnectionPool; }
 
     /** トランザクション管理なんかには必要なオブジェクト */
     protected _QueryRunner!: QueryRunner;
@@ -13,13 +14,12 @@ export default class Accessor {
     /** コネクション生成 */
     public async CreateConnection(config: any): Promise<any> {
 
-        if(!Accessor._ConnectionPool)
-            Accessor._ConnectionPool = await createConnection(config);
-        if(!Accessor._ConnectionPool.isConnected)
-            await Accessor._ConnectionPool.connect();
-        const runner = Accessor._ConnectionPool.createQueryRunner();
+        if(!this._ConnectionPool)
+        this._ConnectionPool = await createConnection(config);
+        if(!this._ConnectionPool.isConnected)
+            await this._ConnectionPool.connect();
+        const runner = this._ConnectionPool.createQueryRunner();
         this._QueryRunner = runner;
-
         return this;
     }
 }

@@ -5,7 +5,7 @@ import DataStore from '../../app.infras/datastores/datastore.mysql';
 import { TrWanted, PatchSpecifyKeys } from '../../app.entities/tr.wanted';
 import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
 import { DoneStates } from 'strack-wanted-meta/dist/consts/states/states.done';
-import uuid from 'node-uuid';
+import { v4 as uuidv } from 'uuid';
 
 export class WantedUpsertRepository extends AbsRepository implements IWantedUpsertRepository {
 
@@ -67,7 +67,7 @@ export class WantedUpsertRepository extends AbsRepository implements IWantedUpse
      */
     public /* override */ async Save(): Promise<any> {
         if(this._Wanted.uuid === '') {
-            this._Wanted.uuid = `${uuid.v4()}-${Date.now()}`;
+            this._Wanted.uuid = `${uuidv()}`;
             this._Wanted.revision = 1;
             this._Wanted.enabled = EntityEnableStates.ENABLE;
             this._Wanted.done = DoneStates.YET;

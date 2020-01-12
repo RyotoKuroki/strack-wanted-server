@@ -83,6 +83,21 @@ export default class DataStore {
         .execute();
         return result.raw.affectedRows;
     }
+    /** insert */
+    public async Fetch(options: {
+        schema: any,
+        schemaAlias: string,
+        selections?: string[], 
+        where?: { [key: string]: any } }): Promise<any[]> {
+        
+        const builder = this._Accessor.QueryRunner.manager.createQueryBuilder(options.schema, options.schemaAlias);
+        if (options.selections)
+            builder.select(options.selections);
+        if (options.where)
+            builder.where(options.where);
+        const result = await builder.getMany();
+        return result;
+    }
     /** some query */
     public async PatchManually(patch: (queryBuilder: any) => void): Promise<any> {
         const builder = this._Accessor.QueryRunner.manager.createQueryBuilder();
@@ -126,5 +141,6 @@ export default class DataStore {
     /** release */
     public async Release() {
         await this._Accessor.QueryRunner.release();
+        await this._Accessor.ConnectionPool.close();
     }
 }

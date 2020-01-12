@@ -1,25 +1,68 @@
-import IWantedDoneRepository from "../app.domains.repositories/wanted.done/I.wanted.done.repository";
-import { PatchSpecifyKeys, TrWanted } from '../app.entities/tr.wanted';
-import { DoneStates } from 'strack-wanted-meta/dist/consts/states/states.done';
+import { TrWanted } from '../app.entities/tr.wanted';
+import DataStore from "../app.infras/datastores/datastore.mysql";
 
 export default class WantedDoneDomain {
 
-    protected _WantedDoneRepository!: IWantedDoneRepository;
+    // TODO: エンティティのフィールド定義 meta へ移動
+    // 本当は TrWanted.PrototypeNames.uuid -> "uuid" みたいに取得できればいいけど。。。
+    // やり方が分からない Orz
+    protected FIELD_WHOIS = 'whois';
+    protected FIELD_UUID = 'uuid';
+    protected FIELD_REVISION = 'revision';
+    protected FIELD_ENABLED = 'enabled';
+    protected FIELD_DONE = 'done';
 
-    constructor(wantedDoneRepository: IWantedDoneRepository) {
-        this._WantedDoneRepository = wantedDoneRepository;
+    protected _DataStore: DataStore;
+    constructor (dataStore: DataStore) {
+        this._DataStore = dataStore;
     }
 
-    public async Done(whois: string, uuid: string, revision: number, done: string): Promise<IWantedDoneRepository> {
+    public async Done (wanted: TrWanted): Promise<void> {
 
-        // クライアントから受信した、Wanted 情報を特定するためのキーを使用し、DBレコード抽出
-        // 更新対象の Wanted 情報を抽出し、保持する
-        const specifyKeys = new PatchSpecifyKeys(uuid, revision, whois);
-        await this._WantedDoneRepository.StoreWanted(specifyKeys);
-        // 編集
-        await this._WantedDoneRepository.ChangeDoneState(done === DoneStates.DONE);
-        // DB更新
-        await this._WantedDoneRepository.Update();
-        return this._WantedDoneRepository;
+        const rev = Number(wanted.revision);
+        // ■更新時の抽出条件
+        const conditions: { [key: string]: any } = {};
+        TrWanted.MergeArray2Entity([
+            wanted.whois,
+            wanted.uuid,
+            rev
+        ], conditions, [
+            this.FIELD_WHOIS,
+            this.FIELD_UUID,
+            this.FIELD_REVISION,
+        ]);
+        // ■更新（更新）時の設定値
+        const values: { [key: string]: any } = {};
+        TrWanted.MergeArray2Entity([
+            rev + 1,
+            wanted.done
+        ], values, [
+            this.FIELD_REVISION,
+            this.FIELD_DONE
+        ]);
+        const affectedRows = await this._DataStore.Update(TrWanted, values, conditions);
+        this._DataStore.ThrowErrorNotExpectedAffectedRowsCount(affectedRows, 1);
+    }
+
+    public async Fetch (wanted: TrWanted): Promise<{ wanted: TrWanted }> {
+
+        const rev = Number(wanted.revision);
+        // ▽更新後のデータ再取得
+        const conditions: { [key: string]: any } = {};
+        TrWanted.MergeArray2Entity([
+            wanted.whois,
+            wanted.uuid,
+            rev + 1,
+        ], conditions, [
+            this.FIELD_WHOIS,
+            this.FIELD_UUID,
+            this.FIELD_REVISION,
+        ]);
+        const wanteds = await this._DataStore.Fetch({
+            schema: TrWanted,
+            schemaAlias: 'TrWanted',
+            where: conditions
+        });
+        return { wanted: wanteds[0] };
     }
 }

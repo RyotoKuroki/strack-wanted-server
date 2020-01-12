@@ -1,5 +1,6 @@
 import { Entity, Column, BaseEntity, PrimaryColumn } from 'typeorm'
 import ITR_Account from 'strack-wanted-meta/dist/entities/I.tr.account';
+import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
 
 @Entity()
 export class TrAccount extends BaseEntity implements ITR_Account {
@@ -11,7 +12,7 @@ export class TrAccount extends BaseEntity implements ITR_Account {
     public whois: string = '';
     /** 情報の利用可否 enable/disable */
     @Column({ length: 256 })
-    public enabled: string = 'enable';
+    public enabled: string = EntityEnableStates.ENABLE;
     /** バージョン */
     @Column('double')
     public revision: number = 0;
