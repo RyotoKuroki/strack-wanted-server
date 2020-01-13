@@ -18,7 +18,7 @@ export default class WantedDeleteDomain {
         this._DataStore = dataStore;
     }
 
-    public async Remove (wanted: TrWanted): Promise<void> {
+    public async Remove (wanted: TrWanted): Promise<{ whois: string, uuid: string, revision: number }> {
 
         const rev = Number(wanted.revision);
         // ■削除時の抽出条件
@@ -35,7 +35,7 @@ export default class WantedDeleteDomain {
         // ■削除（更新）時の設定値
         const values: { [key: string]: any } = {};
         EntityMerge.Array2Entity([
-            rev + 1,
+            TrWanted.GetNextRev(rev),
             EntityEnableStates.DISABLE,
         ], values, [
             this.FIELD_REVISION,
@@ -44,17 +44,20 @@ export default class WantedDeleteDomain {
         const affectedRows = await this._DataStore.Update(TrWanted, values, conditions);
         this._DataStore.ThrowErrorNotExpectedAffectedRowsCount(affectedRows, 1);
 
+        return {
+            whois: wanted.whois,
+            uuid: wanted.uuid,
+            revision: values.revision, // next-value
+        };
     }
     
-    public async Fetch (wanted: TrWanted): Promise<{ wanted: TrWanted }> {
+    public async Fetch (whois: string, uuid: string, revision: number): Promise<{ wanted: TrWanted }> {
 
-        const rev = Number(wanted.revision);
-        // ▽更新後のデータ再取得
         const conditions: { [key: string]: any } = {};
         EntityMerge.Array2Entity([
-            wanted.whois,
-            wanted.uuid,
-            rev + 1,
+            whois,
+            uuid,
+            Number(revision),
         ], conditions, [
             this.FIELD_WHOIS,
             this.FIELD_UUID,

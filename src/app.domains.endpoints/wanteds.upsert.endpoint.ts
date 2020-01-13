@@ -32,18 +32,12 @@ export default class WantedsUpsertEndpoint extends Endpoint {
 
             const isNew = domain.IsNew(params.wanted);
 
-            let upd: { wanted: TrWanted };
-            if (isNew) {
-                const ins = await domain.Insert(params.wanted);
-                // 新規登録の場合、ドメイン内の Insert 処理で uuid 等が新規で生成される。
-                // 生成された値は、Fetch 時のパラメータとして使用。
-                // リビジョンは初期値：0（ドメイン内で +1）。
-                upd = await domain.Fetch(ins.wanted.whois, ins.wanted.uuid, 0);
-            } else {
-                await domain.Upsert(params.wanted);
-                upd = await domain.Fetch(params.wanted.whois, params.wanted.uuid, params.wanted.revision);
-            }
-            result.wanteds = [upd.wanted]; // 詰め替えなくてもいいけど、お作法でやってるだけｗ
+            const specifyKeys = isNew
+                ? await domain.Insert(params.wanted)
+                : await domain.Upsert(params.wanted);
+            const domResult = await domain.Fetch(specifyKeys.whois, specifyKeys.uuid, specifyKeys.revision);
+
+            result.wanteds = [domResult.wanted]; // 詰め替えなくてもいいけど、お作法でやってるだけｗ
             return result;
         });
         return result;
@@ -63,7 +57,7 @@ export default class WantedsUpsertEndpoint extends Endpoint {
     async OnFail (error: any) {
         this._Response.send(JSON.stringify({
             success: false,
-            error: 'エラーが発生しました。'
+            error: error.message
         }));
     }
 }

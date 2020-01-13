@@ -29,8 +29,10 @@ export default class WantedsDoneEndpoint extends Endpoint {
         params.wanted.whois = params.whois;
         const domain = new WantedDoneDomain(dataStore);
         const result = await dataStore.RunWithTransaction(async (result: { wanteds: TrWanted[] }) => {
-            await domain.Done(params.wanted);
-            const domResult = await domain.Fetch(params.wanted);
+
+            const specifyKeys = await domain.Done(params.wanted);
+            const domResult = await domain.Fetch(specifyKeys.whois, specifyKeys.uuid, specifyKeys.revision);
+            
             result.wanteds = [domResult.wanted]; // 詰め替えなくてもいいけど、お作法でやってるだけｗ
             return result;
         });
@@ -52,7 +54,7 @@ export default class WantedsDoneEndpoint extends Endpoint {
         console.log(`on-fail : ${JSON.stringify(error)}`);
         this._Response.send(JSON.stringify({
             success: false,
-            error: 'エラーが発生しました。'
+            error: error.message
         }));
     }
 }

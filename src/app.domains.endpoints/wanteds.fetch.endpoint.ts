@@ -28,7 +28,9 @@ export default class WantedsFetchEndpoint extends Endpoint {
 
         const domain = new WantedFetchDomain(dataStore);
         const result = await dataStore.Run(async (result: { wanteds: TrWanted[] }) => {
+
             const domResult = await domain.Fetch(params.whois, EntityEnableStates.ENABLE);
+            
             result.wanteds = domResult.wanteds; // 詰め替えなくてもいいけど、お作法でやってるだけｗ
             return result;
         });
@@ -50,7 +52,7 @@ export default class WantedsFetchEndpoint extends Endpoint {
         console.log(`on-fail : ${JSON.stringify(error)}`);
         this._Response.send(JSON.stringify({
             success: false,
-            error: 'エラーが発生しました。'
+            error: error
         }));
     }
 }

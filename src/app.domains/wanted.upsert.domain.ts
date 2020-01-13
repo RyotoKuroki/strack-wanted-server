@@ -28,23 +28,21 @@ export default class WantedUpsertDomain {
         return wanted.uuid === undefined || wanted.uuid === '';
     }
 
-    public async Insert (wanted: TrWanted): Promise<{ wanted: TrWanted }> {
+    public async Insert (wanted: TrWanted): Promise<{ whois: string, uuid: string, revision: number }> {
 
-        const rev = Number(wanted.revision);
         // ■更新（作成）時の設定値
         const values: { [key: string]: any } = {};
-        const src = [
+        EntityMerge.Array2Entity([
             uuidv(),
             wanted.whois,
             EntityEnableStates.ENABLE,
-            1,
+            TrWanted.GetNextRev(),
             wanted.name,
             wanted.prize_money,
             wanted.image_base64,
             wanted.warning,
             wanted.done,
-        ];
-        const fields = [
+        ], values, [
             this.FIELD_UUID,
             this.FIELD_WHOIS,
             this.FIELD_ENABLED,
@@ -54,18 +52,18 @@ export default class WantedUpsertDomain {
             this.FIELD_IMAGE_BASE64,
             this.FIELD_WARNING,
             this.FIELD_DONE,
-        ];
-        EntityMerge.Array2Entity(src, values, fields);
+        ]);
         const affectedRows = await this._DataStore.Insert(TrWanted, values);
         this._DataStore.ThrowErrorNotExpectedAffectedRowsCount(affectedRows, 1);
 
-        // Fetch ように値設定
-        const wanted4fetch = new TrWanted();
-        EntityMerge.Array2Entity(src, wanted4fetch, fields);
-        return { wanted: wanted4fetch };
+        return {
+            whois: wanted.whois,
+            uuid: values.uuid, // created-value
+            revision: values.revision, // next-value
+        };
     }
 
-    public async Upsert (wanted: TrWanted): Promise<void> {
+    public async Upsert (wanted: TrWanted): Promise<{ whois: string, uuid: string, revision: number }> {
 
         const rev = Number(wanted.revision);
         // ■更新時の抽出条件
@@ -82,7 +80,7 @@ export default class WantedUpsertDomain {
         // ■更新（更新）時の設定値
         const values: { [key: string]: any } = {};
         EntityMerge.Array2Entity([
-            rev + 1,
+            TrWanted.GetNextRev(rev),
             wanted.name,
             wanted.prize_money,
             wanted.warning,
@@ -96,17 +94,22 @@ export default class WantedUpsertDomain {
         ]);
         const affectedRows = await this._DataStore.Update(TrWanted, values, conditions);
         this._DataStore.ThrowErrorNotExpectedAffectedRowsCount(affectedRows, 1);
+
+        return {
+            whois: wanted.whois,
+            uuid: wanted.uuid,
+            revision: values.revision, // next-value
+        };
     }
 
     public async Fetch (whois: string, uuid: string, revision: number): Promise<{ wanted: TrWanted }> {
 
-        const rev = Number(revision);
         // ▽更新後のデータ再取得
         const conditions: { [key: string]: any } = {};
         EntityMerge.Array2Entity([
             whois,
             uuid,
-            rev + 1,
+            Number(revision),
         ], conditions, [
             this.FIELD_WHOIS,
             this.FIELD_UUID,

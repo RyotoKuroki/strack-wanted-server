@@ -28,7 +28,6 @@ export default class EntityMerge<T extends BaseEntity> {
     */
 
     /**
-     * Undefined 以外のフィールドの値を置換え。
      * src に設定された要素数と fields の要素数を合わせる必要があります。
      */
     public static Array2Entity<T> (src: T[], dest: { [key: string]: any }, fields: any[]) {

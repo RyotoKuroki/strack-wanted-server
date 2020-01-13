@@ -1,5 +1,5 @@
 import express, { request } from 'express';
-import WantedsFetchEndpoint from './app.domains.endpoints/wanted.fetch.endpoint';
+import WantedsFetchEndpoint from './app.domains.endpoints/wanteds.fetch.endpoint';
 import WantedsDeleteEndpoint from './app.domains.endpoints/wanteds.delete.endpoint';
 import WantedsUpsertEndpoint from './app.domains.endpoints/wanteds.upsert.endpoint';
 import WantedsDoneEndpoint from './app.domains.endpoints/wanteds.done.endpoint';

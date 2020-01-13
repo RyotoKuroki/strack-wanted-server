@@ -37,6 +37,11 @@ export class TrWanted extends BaseEntity implements ITR_Wanted {
         this.revision = 0;
     }
 
+    /** インクリメントしたリビジョン値取得 */
+    public static GetNextRev (current?: number) {
+        return !current ? 1 : (current + 1);
+    }
+
     /**
      * とりあえず、汎用性が効きそうな条件での抽出処理のみここに実装する！
      * 複雑で特殊な抽出はここには実装しない！！
