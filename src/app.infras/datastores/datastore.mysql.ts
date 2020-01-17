@@ -141,6 +141,5 @@ export default class DataStore {
     /** release */
     public async Release() {
         await this._Accessor.QueryRunner.release();
-        await this._Accessor.ConnectionPool.close();
     }
 }
