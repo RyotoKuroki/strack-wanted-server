@@ -1,17 +1,28 @@
 import Accessor from './datastore.mysql.accessors/accessor.mysql';
 import AccessorConfig from './datastore.mysql.accessors/accessor.mysql.config';
-import { BaseEntity } from 'typeorm';
+import { BaseEntity, QueryRunner } from 'typeorm';
+import { TrWanted } from '../../app.entities/tr.wanted';
 
 export default class DataStore {
 
     protected _Accessor!: Accessor;
+    protected _QueryRunner!: QueryRunner;
+    // public get QueryRunner(): QueryRunner { return this._QueryRunner; }
 
-    public async Init(entities: Array<any>) {
-        const accessor = new Accessor();
-        const config = AccessorConfig.GetConfig(entities);
-        this._Accessor = await accessor.CreateConnection(config);
+    public static async Init(/*entities: Array<any>*/) {
+        const config = AccessorConfig.GetConfig([
+            TrWanted,
+        ]);
+        /*this._Accessor = */await Accessor.CreateConnection(config);
         return this;
     }
+
+    public async CreateRunner () {
+        this._Accessor = new Accessor();
+        const runner = this._Accessor.FetchConnection().createQueryRunner();
+        this._QueryRunner = runner;
+    }
+
     /**
      * DB接続の下処理を実施。
      * トランザクション管理なし。
@@ -50,12 +61,12 @@ export default class DataStore {
     }
     /** begin tran */
     public async Transaction() {
-        await this._Accessor.QueryRunner.startTransaction();
+        await this._QueryRunner.startTransaction();
     }
 
     /** insert */
     public async Insert(schema: any, values: {[key: string]: any;}): Promise<number> {
-        const builder = this._Accessor.QueryRunner.manager.createQueryBuilder();
+        const builder = this._QueryRunner.manager.createQueryBuilder();
         const result = await builder
         .insert()
         .into(schema)
@@ -65,7 +76,7 @@ export default class DataStore {
     }
     /** update */
     public async Update(schema: any, valuesEntity: {[key: string]: any;}, wheresEntity: {[key: string]: any;}): Promise<number> {
-        const builder = this._Accessor.QueryRunner.manager.createQueryBuilder();
+        const builder = this._QueryRunner.manager.createQueryBuilder();
         const result = await builder
         .update(schema)
         .set(valuesEntity)
@@ -75,7 +86,7 @@ export default class DataStore {
     }
     /** delete（物理削除） */
     public async Delete(schema: any, wheresEntity: {[key: string]: any;}): Promise<number> {
-        const builder = this._Accessor.QueryRunner.manager.createQueryBuilder();
+        const builder = this._QueryRunner.manager.createQueryBuilder();
         const result = await builder
         .delete()
         .from(schema)
@@ -90,7 +101,7 @@ export default class DataStore {
         selections?: string[], 
         where?: { [key: string]: any } }): Promise<any[]> {
         
-        const builder = this._Accessor.QueryRunner.manager.createQueryBuilder(options.schema, options.schemaAlias);
+        const builder = this._QueryRunner.manager.createQueryBuilder(options.schema, options.schemaAlias);
         if (options.selections)
             builder.select(options.selections);
         if (options.where)
@@ -100,7 +111,7 @@ export default class DataStore {
     }
     /** some query */
     public async PatchManually(patch: (queryBuilder: any) => void): Promise<any> {
-        const builder = this._Accessor.QueryRunner.manager.createQueryBuilder();
+        const builder = this._QueryRunner.manager.createQueryBuilder();
         return await patch(builder);
     }
 
@@ -132,14 +143,14 @@ export default class DataStore {
     }
     /** commit */
     public async Commit() {
-        await this._Accessor.QueryRunner.commitTransaction();
+        await this._QueryRunner.commitTransaction();
     }
     /** rollback */
     public async Rollback() {
-        await this._Accessor.QueryRunner.rollbackTransaction();
+        await this._QueryRunner.rollbackTransaction();
     }
     /** release */
     public async Release() {
-        await this._Accessor.QueryRunner.release();
+        await this._QueryRunner.release();
     }
 }

@@ -23,7 +23,7 @@ export default class WantedsFetchEndpoint extends Endpoint {
 
     /** メイン処理 */
     /* override */ 
-    @InitDataStore([TrWanted])
+    @InitDataStore(/*[TrWanted]*/)
     async MainMethod (dataStore: DataStore, params: { whois: string }): Promise<{ wanteds: TrWanted[] }> {
 
         const domain = new WantedFetchDomain(dataStore);

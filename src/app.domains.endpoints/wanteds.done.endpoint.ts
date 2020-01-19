@@ -23,7 +23,7 @@ export default class WantedsDoneEndpoint extends Endpoint {
 
     /** メイン処理 */
     /* override */ 
-    @InitDataStore([TrWanted])
+    @InitDataStore(/*[TrWanted]*/)
     async MainMethod (dataStore: DataStore, params: { whois: string, wanted: TrWanted }): Promise<{ wanteds: TrWanted[] }> {
 
         params.wanted.whois = params.whois;
