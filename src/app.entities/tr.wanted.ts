@@ -1,6 +1,7 @@
 import { Entity, Column, BaseEntity, PrimaryColumn } from 'typeorm'
 import ITR_Wanted from 'strack-wanted-meta/dist/entities/I.tr.wanted';
 import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
+import DataStore from '../app.infras/datastores/datastore.mysql';
 
 @Entity()
 export class TrWanted extends BaseEntity implements ITR_Wanted {
@@ -42,11 +43,19 @@ export class TrWanted extends BaseEntity implements ITR_Wanted {
         return !current ? 1 : (current + 1);
     }
 
-    /**
-     * とりあえず、汎用性が効きそうな条件での抽出処理のみここに実装する！
-     * 複雑で特殊な抽出はここには実装しない！！
-     */
-    public static async Fetch_ByEntity (condition: { [key: string]: any }) {
-        return await TrWanted.find({ where: condition });
+    public static async InTran_Fetch (dataStore: DataStore, conditions: { [key: string]: any } | TrWanted) {
+        return await dataStore.Fetch({
+            schema: TrWanted,
+            schemaAlias: 'TrWanted',
+            where: conditions,
+        });
+    }
+
+    public static async InTran_Insert (dataStore: DataStore, overview: { [key: string]: any } | TrWanted) {
+        return await dataStore.Insert(TrWanted, overview);
+    }
+
+    public static async InTran_Update (dataStore: DataStore, values: { [key: string]: any } | TrWanted, conditions: { [key: string]: any } | TrWanted) {
+        return await dataStore.Update(TrWanted, values, conditions);
     }
 }

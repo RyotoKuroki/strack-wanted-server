@@ -1,6 +1,6 @@
 import { TrWanted } from '../app.entities/tr.wanted';
 import DataStore from "../app.infras/datastores/datastore.mysql";
-import EntityMerge from '../app.infras/datastores/datastore.libs/datastore.entity.merge';
+import { KvpMap } from '../app.utils/KvpMap';
 
 export default class WantedDoneDomain {
 
@@ -21,54 +21,37 @@ export default class WantedDoneDomain {
     public async Done (wanted: TrWanted): Promise<{ whois: string, uuid: string, revision: number }> {
 
         const rev = Number(wanted.revision);
+
         // ■更新時の抽出条件
-        const conditions: { [key: string]: any } = {};
-        EntityMerge.Array2Entity([
-            wanted.whois,
-            wanted.uuid,
-            rev
-        ], conditions, [
-            this.FIELD_WHOIS,
-            this.FIELD_UUID,
-            this.FIELD_REVISION,
-        ]);
+        const condition = new KvpMap()
+        .Add2Map(this.FIELD_WHOIS, wanted.whois)
+        .Add2Map(this.FIELD_UUID, wanted.uuid)
+        .Add2Map(this.FIELD_REVISION, rev)
+        .Map;
         // ■更新（更新）時の設定値
-        const values: { [key: string]: any } = {};
-        EntityMerge.Array2Entity([
-            TrWanted.GetNextRev(rev),
-            wanted.done
-        ], values, [
-            this.FIELD_REVISION,
-            this.FIELD_DONE
-        ]);
-        const affectedRows = await this._DataStore.Update(TrWanted, values, conditions);
+        const value = new KvpMap()
+        .Add2Map(this.FIELD_REVISION, TrWanted.GetNextRev(rev))
+        .Add2Map(this.FIELD_DONE, wanted.done)
+        .Map;
+        const affectedRows = await TrWanted.InTran_Update(this._DataStore, value, condition);
         this._DataStore.ThrowErrorNotExpectedAffectedRowsCount(affectedRows, 1);
 
         return {
             whois: wanted.whois,
             uuid: wanted.uuid,
-            revision: values.revision, // next-value
+            revision: value.revision, // next-value
         };
     }
 
     public async Fetch (whois: string, uuid: string, revision: number): Promise<{ wanted: TrWanted }> {
 
         // ▽更新後のデータ再取得
-        const conditions: { [key: string]: any } = {};
-        EntityMerge.Array2Entity([
-            whois,
-            uuid,
-            Number(revision),
-        ], conditions, [
-            this.FIELD_WHOIS,
-            this.FIELD_UUID,
-            this.FIELD_REVISION,
-        ]);
-        const wanteds = await this._DataStore.Fetch({
-            schema: TrWanted,
-            schemaAlias: 'TrWanted',
-            where: conditions
-        });
+        const map = new KvpMap()
+        .Add2Map(this.FIELD_WHOIS, whois)
+        .Add2Map(this.FIELD_UUID, uuid)
+        .Add2Map(this.FIELD_REVISION, Number(revision))
+        .Map;
+        const wanteds = await TrWanted.InTran_Fetch(this._DataStore, map);
         return { wanted: wanteds[0] };
     }
 }
