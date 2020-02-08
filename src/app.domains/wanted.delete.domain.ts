@@ -1,5 +1,5 @@
 import { TrWanted } from '../app.entities/tr.wanted';
-import DataStore from "../app.infras/datastores/datastore.mysql";
+import DataStore from "../app.infras/datastores/datastore";
 import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
 import { KvpMap } from '../app.utils/KvpMap';
 

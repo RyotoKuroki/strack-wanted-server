@@ -1,7 +1,7 @@
 import { Entity, Column, BaseEntity, PrimaryColumn } from 'typeorm'
 import ITR_Wanted from 'strack-wanted-meta/dist/entities/I.tr.wanted';
 import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
-import DataStore from '../app.infras/datastores/datastore.mysql';
+import DataStore from '../app.infras/datastores/datastore';
 
 @Entity()
 export class TrWanted extends BaseEntity implements ITR_Wanted {

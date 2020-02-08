@@ -1,4 +1,4 @@
-import DataStore from "../datastore.mysql";
+import DataStore from "../datastore";
 
 /**
  * メソッドデコレータ。

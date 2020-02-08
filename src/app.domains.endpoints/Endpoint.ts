@@ -1,4 +1,4 @@
-import DataStore from "../app.infras/datastores/datastore.mysql";
+import DataStore from "../app.infras/datastores/datastore";
 
 /**
  * クラス用デコレータ。

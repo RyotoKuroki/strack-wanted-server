@@ -2,7 +2,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import routes from './routes';
-import DataStore from './app.infras/datastores/datastore.mysql';
+import DataStore from './app.infras/datastores/datastore';
 
 DataStore.Init()
 .then(() => {

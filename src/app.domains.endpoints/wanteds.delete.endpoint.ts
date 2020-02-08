@@ -1,6 +1,6 @@
 import Endpoint, { UseDataStore } from './Endpoint';
 import WantedDeleteDomain from '../app.domains/wanted.delete.domain';
-import DataStore from '../app.infras/datastores/datastore.mysql';
+import DataStore from '../app.infras/datastores/datastore';
 import { InitDataStore } from '../app.infras/datastores/datastore.decorators/datastore.decorators';
 import { TrWanted } from '../app.entities/tr.wanted';
 
