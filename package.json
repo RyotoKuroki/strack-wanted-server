@@ -19,7 +19,7 @@
     "mysql": "^2.17.1",
     "node-express-generator": "^0.0.1",
     "strack-wanted-meta": "^1.0.14",
-    "typeorm": "^0.2.19",
+    "typeorm": "^0.2.25",
     "typescript": "^3.6.3",
     "uuid": "^3.3.3"
   },
