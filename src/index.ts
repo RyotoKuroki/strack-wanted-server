@@ -4,6 +4,8 @@ import bodyParser from 'body-parser';
 import routes from './routes';
 import DataStore from './app.infras/datastores/datastore';
 
+
+
 DataStore.Init()
 .then(() => {
     const app = express();
