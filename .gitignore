@@ -1,5 +1,5 @@
 .DS_Store
-/app.infras/**/*accessor.*.config.ts
+src/app.infras/**/accessor.*.config.ts
 
 node_modules
 /dist
