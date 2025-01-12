@@ -3,12 +3,14 @@ export default class AccessorConfig {
     public static GetConfig(schemas?: Array<any>): any {
         return {
             type: "mysql",
+            
             // extra: { socketPath: '/cloudsql/{YOUR_DATABASE_PATH}' },
-            host: "XXX.XXX.XXX.XXX",
-            port: 1234,
-            username: "AAAAAAAAAAAAAAAAAAAAAA",
-            password: "BBBBBBBBBBBBBBBBBBBBBB",
-            database: "CCCCCCCCCCCCCCCCCCCCCC",
+            host: {YOUR_DATABASE_HOST_IP},
+            port: {PORT},
+            username: {USER_NAME},
+            password: {PASSWORD},
+            database: {DATABASE_NAME},
+
             entities: schemas
         };
     }
