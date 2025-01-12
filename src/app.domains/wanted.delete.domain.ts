@@ -27,9 +27,9 @@ export default class WantedDeleteDomain {
         enabled: string,
     }> {
         const rev = Number(wanted.revision);
-        const nextRev = TrWanted.GetNextRev(rev);
+        const nextRev = rev + 1;
 
-        await TrWanted.Update(
+        await new TrWanted().Update(
             this.EntityManager,
             {
                 revision    : nextRev,

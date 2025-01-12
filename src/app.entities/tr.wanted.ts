@@ -46,12 +46,7 @@ export class TrWanted extends BaseEntity implements ITR_Wanted {
         this.revision = 0;
     }
 
-    /** インクリメントしたリビジョン値取得 */
-    public static GetNextRev (current?: number) {
-        return !current ? 1 : (current + 1);
-    }
-
-    public static async Insert (
+    public async Insert (
         entityManager: EntityManager,
         entry: TrWanted
     ): Promise<number> {
@@ -73,7 +68,7 @@ export class TrWanted extends BaseEntity implements ITR_Wanted {
             : result.raw.affectedRows!;
     }
 
-    public static async Update (
+    public async Update (
         entityManager: EntityManager,
         sets: {
             revision: number,
@@ -105,7 +100,7 @@ export class TrWanted extends BaseEntity implements ITR_Wanted {
             : result.affected!;
     }
 
-    public static async Delete (
+    public async Delete (
         entityManager: EntityManager,
         where: {
             uuid: string,

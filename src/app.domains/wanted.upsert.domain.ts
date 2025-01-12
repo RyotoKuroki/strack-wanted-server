@@ -42,14 +42,14 @@ export default class WantedUpsertDomain {
         trWanted.uuid = uuidv();
         trWanted.whois = wanted.whois;
         trWanted.enabled = EntityEnableStates.ENABLE;
-        trWanted.revision = TrWanted.GetNextRev();
+        trWanted.revision = 1;
         trWanted.name = wanted.name;
         trWanted.prize_money = wanted.prize_money;
         trWanted.image_base64 = wanted.image_base64;
         trWanted.warning = wanted.warning;
         trWanted.done = wanted.done;
 
-        await TrWanted.Insert(this.EntityManager, trWanted);
+        await new TrWanted().Insert(this.EntityManager, trWanted);
 
         const result = {
             whois   : trWanted.whois,
@@ -68,9 +68,9 @@ export default class WantedUpsertDomain {
     }> {
 
         const rev = Number(wanted.revision);
-        const nextRev = TrWanted.GetNextRev(rev);
+        const nextRev = rev + 1;
 
-        await TrWanted.Update(
+        await new TrWanted().Update(
             this.EntityManager,
             {
                 revision    : nextRev,
