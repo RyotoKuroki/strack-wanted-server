@@ -1,10 +1,10 @@
 import Endpoint, { UseDataStore } from './Endpoint';
 import WantedDeleteDomain from '../app.domains/wanted.delete.domain';
-import DataStore from '../app.infras/datastores/datastore';
-import { InitDataStore } from '../app.infras/datastores/datastore.decorators/datastore.decorators';
 import { TrWanted } from '../app.entities/tr.wanted';
+import AppDomain from '../app.domains/app.domain';
+import AccessorConfig from '../app.infras/datastores/datastore.mysql.accessors/accessor.mysql.config';
 
-@UseDataStore
+//@UseDataStore
 export default class WantedsDeleteEndpoint extends Endpoint {
 
     /** コンストラクタ */
@@ -14,28 +14,52 @@ export default class WantedsDeleteEndpoint extends Endpoint {
 
     /** リクエストパラメータを抽出 */
     /* override */ 
-    GetParams (dto: any): { whois: string, wanted: TrWanted } {
+    GetParams (
+        dto: any
+    ): {
+        whois: string,
+        wanted: TrWanted
+    } {
         return {
             whois: dto.whois,
-            wanted: dto.wanteds[0]
+            wanted: dto.wanted
         };
     }
 
     /** メイン処理 */
     /* override */ 
-    @InitDataStore(/*[TrWanted]*/)
-    async MainMethod (dataStore: DataStore, params: { whois: string, wanted: TrWanted }): Promise<{ wanteds: TrWanted[] }> {
+    //@InitDataStore(/*[TrWanted]*/)
+    async MainMethod (
+        //dataStore: DataStore,
+        params: {
+            whois: string,
+            wanted: TrWanted
+        }
+    ): Promise<{
+        wanted: TrWanted
+    }> {
 
-        params.wanted.whois = params.whois;
-        const domain = new WantedDeleteDomain(dataStore);
-        const result = await dataStore.RunWithTransaction(async (result: { wanteds: TrWanted[] }) => {
-            
-            const specifyKeys = await domain.Remove(params.wanted);
-            const domResult = await domain.Fetch(specifyKeys.whois, specifyKeys.uuid, specifyKeys.revision);
-            
-            result.wanteds = [domResult.wanted]; // 詰め替えなくてもいいけど、お作法でやってるだけｗ
-            return result;
-        });
+        const appDomain = new AppDomain();
+        const result = await appDomain.RunWithTran(
+            AccessorConfig.GetConfig([TrWanted]),
+            async (entityManager) => {
+
+                console.log("Delete wanted(1)");
+                const domain = new WantedDeleteDomain(entityManager);
+
+                console.log("Delete wanted(2)");
+                const resultUpsert = await domain.Remove(params.wanted);
+
+                console.log("Delete wanted(3)");
+                const resultEntity = await domain.Fetch(
+                                                    resultUpsert.whois,
+                                                    resultUpsert.uuid,
+                                                    resultUpsert.revision,
+                                                    resultUpsert.enabled);
+                console.log("Delete wanted(4)");
+                return resultEntity;
+            });
+
         return result;
     }
 
@@ -44,7 +68,7 @@ export default class WantedsDeleteEndpoint extends Endpoint {
     async OnSuccess (result: any) {
         this._Response.send(JSON.stringify({
             success: true,
-            wanteds: result.wanteds
+            wanted: result.wanted
         }));
     }
 

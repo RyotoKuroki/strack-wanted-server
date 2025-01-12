@@ -1,4 +1,4 @@
-import DataStore from "../app.infras/datastores/datastore";
+//import DataStore from "../app.infras/datastores/datastore";
 
 /**
  * クラス用デコレータ。
@@ -8,14 +8,14 @@ import DataStore from "../app.infras/datastores/datastore";
  */
 export const UseDataStore = <T extends {new(...args:any[]): {}}> (constructor: T) => {
     return class extends constructor {
-        _DataStore = new DataStore();
+        //_DataStore = new DataStore();
     }
 }
 
 export default abstract class Endpoint {
 
     /** Decorator で自動生成 */
-    protected _DataStore!: DataStore;
+    //protected _DataStore!: DataStore;
 
     protected _Request: any;
     protected _Response: any;
@@ -29,7 +29,7 @@ export default abstract class Endpoint {
         try {
             const params = this.GetParams(dto);
 
-            const mainResult = await this.MainMethod(this._DataStore, params);
+            const mainResult = await this.MainMethod(/*this._DataStore, */params);
 
             await this.OnSuccess(mainResult);
 
@@ -42,7 +42,7 @@ export default abstract class Endpoint {
     /** リクエストパラメータを抽出 */
     abstract GetParams (dto: any): any;
     /** メイン処理 */
-    abstract async MainMethod (dataStore: DataStore, params: any): Promise<any>;
+    abstract async MainMethod (/*dataStore: DataStore, */params: any): Promise<any>;
     /** 正常終了処理処理 */
     abstract async OnSuccess (result: any): Promise<void>;
     /** 異常終了処理処理 */

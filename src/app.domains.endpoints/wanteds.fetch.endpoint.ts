@@ -1,11 +1,11 @@
 import Endpoint, { UseDataStore } from './Endpoint';
 import WantedFetchDomain from '../app.domains/wanted.fetch.domain';
-import DataStore from '../app.infras/datastores/datastore';
-import { InitDataStore } from '../app.infras/datastores/datastore.decorators/datastore.decorators';
 import { TrWanted } from '../app.entities/tr.wanted';
 import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
+import AppDomain from '../app.domains/app.domain';
+import AccessorConfig from '../app.infras/datastores/datastore.mysql.accessors/accessor.mysql.config';
 
-@UseDataStore
+//@UseDataStore
 export default class WantedsFetchEndpoint extends Endpoint {
 
     /** コンストラクタ */
@@ -23,17 +23,26 @@ export default class WantedsFetchEndpoint extends Endpoint {
 
     /** メイン処理 */
     /* override */ 
-    @InitDataStore(/*[TrWanted]*/)
-    async MainMethod (dataStore: DataStore, params: { whois: string }): Promise<{ wanteds: TrWanted[] }> {
+//    @InitDataStore(/*[TrWanted]*/)
+    async MainMethod (
+        //dataStore: DataStore,
+        params: {
+            whois: string
+        }
+    ): Promise<{
+        wanteds: TrWanted[]
+    }> {
 
-        const domain = new WantedFetchDomain(dataStore);
-        const result = await dataStore.Run(async (result: { wanteds: TrWanted[] }) => {
+        const appDomain = new AppDomain();
+        const result = await appDomain.Run2(
+            AccessorConfig.GetConfig([TrWanted]),
+            async (entityManager) => {
 
-            const domResult = await domain.Fetch(params.whois, EntityEnableStates.ENABLE);
-            
-            result.wanteds = domResult.wanteds; // 詰め替えなくてもいいけど、お作法でやってるだけｗ
-            return result;
-        });
+                const domain = new WantedFetchDomain(entityManager);
+                const resultEntities = await domain.Fetch(params.whois, EntityEnableStates.ENABLE);
+                return resultEntities;
+            });
+
         return result;
     }
 

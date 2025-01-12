@@ -1,8 +1,8 @@
-import DataStore from "../app.infras/datastores/datastore";
 import { TrWanted } from '../app.entities/tr.wanted';
 import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
 import { v4 as uuidv } from 'uuid';
 import { KvpMap } from "../app.utils/KvpMap";
+import { EntityManager } from 'typeorm';
 
 export default class WantedUpsertDomain {
 
@@ -19,76 +19,97 @@ export default class WantedUpsertDomain {
     protected FIELD_WARNING = 'warning';
     protected FIELD_DONE = 'done';
 
-    protected _DataStore: DataStore;
-    constructor (dataStore: DataStore) {
-        this._DataStore = dataStore;
+    protected EntityManager!: EntityManager;
+    constructor (entityManager: EntityManager) {
+        this.EntityManager = entityManager;
     }
 
-    public IsNew (wanted: TrWanted) {
+    public IsNew (
+        wanted: TrWanted
+    ) {
         return wanted.uuid === undefined || wanted.uuid === '';
     }
 
-    public async Insert (wanted: TrWanted): Promise<{ whois: string, uuid: string, revision: number }> {
+    public async Insert (
+        wanted: TrWanted
+    ): Promise<{
+        whois: string,
+        uuid: string,
+        revision: number
+    }> {
 
-        // ■更新（作成）時の設定値
-        const value = new KvpMap()
-        .Add2Map(this.FIELD_UUID, uuidv())
-        .Add2Map(this.FIELD_WHOIS, wanted.whois)
-        .Add2Map(this.FIELD_ENABLED, EntityEnableStates.ENABLE)
-        .Add2Map(this.FIELD_REVISION, TrWanted.GetNextRev())
-        .Add2Map(this.FIELD_NAME, wanted.name)
-        .Add2Map(this.FIELD_PRIZE, wanted.prize_money)
-        .Add2Map(this.FIELD_IMAGE_BASE64, wanted.image_base64)
-        .Add2Map(this.FIELD_WARNING, wanted.warning)
-        .Add2Map(this.FIELD_DONE, wanted.done)
-        .Map;
-        const affectedRows = await TrWanted.InTran_Insert(this._DataStore, value);
-        this._DataStore.ThrowErrorNotExpectedAffectedRowsCount(affectedRows, 1);
+        const trWanted = new TrWanted();
+        trWanted.uuid = uuidv();
+        trWanted.whois = wanted.whois;
+        trWanted.enabled = EntityEnableStates.ENABLE;
+        trWanted.revision = TrWanted.GetNextRev();
+        trWanted.name = wanted.name;
+        trWanted.prize_money = wanted.prize_money;
+        trWanted.image_base64 = wanted.image_base64;
+        trWanted.warning = wanted.warning;
+        trWanted.done = wanted.done;
 
-        return {
-            whois: wanted.whois,
-            uuid: value.uuid, // created-value
-            revision: value.revision, // next-value
+        await TrWanted.Insert(this.EntityManager, trWanted);
+
+        const result = {
+            whois   : trWanted.whois,
+            uuid    : trWanted.uuid,
+            revision: trWanted.revision,
         };
+        return result;
     }
 
-    public async Upsert (wanted: TrWanted): Promise<{ whois: string, uuid: string, revision: number }> {
+    public async Update (
+        wanted: TrWanted
+    ): Promise<{
+        whois: string,
+        uuid: string,
+        revision: number
+    }> {
 
         const rev = Number(wanted.revision);
+        const nextRev = TrWanted.GetNextRev(rev);
 
-        // ■更新時の抽出条件
-        const condition = new KvpMap()
-        .Add2Map(this.FIELD_WHOIS, wanted.whois)
-        .Add2Map(this.FIELD_UUID, wanted.uuid)
-        .Add2Map(this.FIELD_REVISION, rev)
-        .Map;
-        // ■更新（更新）時の設定値
-        const value = new KvpMap()
-        .Add2Map(this.FIELD_REVISION, TrWanted.GetNextRev(rev))
-        .Add2Map(this.FIELD_NAME, wanted.name)
-        .Add2Map(this.FIELD_PRIZE, wanted.prize_money)
-        .Add2Map(this.FIELD_WARNING, wanted.warning)
-        .Add2Map(this.FIELD_IMAGE_BASE64, wanted.image_base64)
-        .Map;
-        const affectedRows = await TrWanted.InTran_Update(this._DataStore, value, condition);
-        this._DataStore.ThrowErrorNotExpectedAffectedRowsCount(affectedRows, 1);
+        await TrWanted.Update(
+            this.EntityManager,
+            {
+                revision    : nextRev,
+                name        : wanted.name,
+                prize_money : wanted.prize_money,
+                warning     : wanted.warning,
+                image_base64: wanted.image_base64
+            },
+            {
+                whois   : wanted.whois,
+                uuid    : wanted.uuid,
+                revision: wanted.revision
+            });
 
         return {
-            whois: wanted.whois,
-            uuid: wanted.uuid,
-            revision: value.revision, // next-value
+            whois   : wanted.whois,
+            uuid    : wanted.uuid,
+            revision: nextRev,
         };
     }
 
-    public async Fetch (whois: string, uuid: string, revision: number): Promise<{ wanted: TrWanted }> {
-
-        // ▽更新後のデータ再取得
-        const map = new KvpMap()
+    public async Fetch (
+        whois: string,
+        uuid: string,
+        revision: number
+    ): Promise<{
+        wanted: TrWanted
+    }> {
+        // ■抽出条件
+        const condition = new KvpMap()
         .Add2Map(this.FIELD_WHOIS, whois)
         .Add2Map(this.FIELD_UUID, uuid)
-        .Add2Map(this.FIELD_REVISION, Number(revision))
+        .Add2Map(this.FIELD_REVISION, revision)
         .Map;
-        const wanteds = await TrWanted.InTran_Fetch(this._DataStore, map);
-        return { wanted: wanteds[0] };
+        
+        const repo = this.EntityManager.getRepository(TrWanted);
+        const wanted = await repo.findOne({
+            where: condition,
+        });
+        return { wanted: wanted! };
     }
 }

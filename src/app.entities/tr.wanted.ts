@@ -1,7 +1,15 @@
-import { Entity, Column, BaseEntity, PrimaryColumn } from 'typeorm'
+import {
+    Entity,
+    Column,
+    BaseEntity,
+    PrimaryColumn,
+    EntityManager,
+    InsertResult,
+    UpdateResult,
+    DeleteResult
+} from 'typeorm'
 import ITR_Wanted from 'strack-wanted-meta/dist/entities/I.tr.wanted';
 import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
-import DataStore from '../app.infras/datastores/datastore';
 
 @Entity()
 export class TrWanted extends BaseEntity implements ITR_Wanted {
@@ -43,19 +51,77 @@ export class TrWanted extends BaseEntity implements ITR_Wanted {
         return !current ? 1 : (current + 1);
     }
 
-    public static async InTran_Fetch (dataStore: DataStore, conditions: { [key: string]: any } | TrWanted) {
-        return await dataStore.Fetch({
-            schema: TrWanted,
-            schemaAlias: 'TrWanted',
-            where: conditions,
-        });
+    public static async Insert (
+        entityManager: EntityManager,
+        entry: TrWanted
+    ): Promise<number> {
+        
+        // ゼロ件の場合は終了
+        if (entry == null) {
+            return 0;
+        }
+
+        const result: InsertResult = await entityManager.getRepository(TrWanted)
+            .createQueryBuilder()
+            .insert()
+            .into(TrWanted)
+            .values([ entry ])
+            .execute();
+        
+        return result.raw.affectedRows == null
+            ? 0
+            : result.raw.affectedRows!;
     }
 
-    public static async InTran_Insert (dataStore: DataStore, overview: { [key: string]: any } | TrWanted) {
-        return await dataStore.Insert(TrWanted, overview);
+    public static async Update (
+        entityManager: EntityManager,
+        sets: {
+            revision: number,
+            enabled?: string,
+
+            name?: string,
+            prize_money?: number,
+            image_base64?: string,
+            warning?: string,
+            done?: string,
+        },
+        where: {
+            uuid: string,
+            whois: string,
+            revision: number,
+            enabled?: string,
+        }
+    ): Promise<number> {
+
+        const repo = entityManager.getRepository(TrWanted);
+        const builder = repo.createQueryBuilder();
+        const updBuilder = builder.update(TrWanted);
+        updBuilder.set(sets);
+        updBuilder.where(where);
+        const result: UpdateResult = await updBuilder.execute();
+
+        return result.affected == null
+            ? 0
+            : result.affected!;
     }
 
-    public static async InTran_Update (dataStore: DataStore, values: { [key: string]: any } | TrWanted, conditions: { [key: string]: any } | TrWanted) {
-        return await dataStore.Update(TrWanted, values, conditions);
+    public static async Delete (
+        entityManager: EntityManager,
+        where: {
+            uuid: string,
+            whois: string,
+            revision: number,
+        }
+    ): Promise<number> {
+        const result: DeleteResult = await entityManager.getRepository(TrWanted)
+            .createQueryBuilder()
+            .delete()
+            .from(TrWanted)
+            .where(where)
+            .execute();
+
+        return result.affected == null
+            ? 0
+            : result.affected!;
     }
 }

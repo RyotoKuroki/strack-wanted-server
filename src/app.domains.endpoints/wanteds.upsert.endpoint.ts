@@ -1,10 +1,10 @@
 import Endpoint, { UseDataStore } from './Endpoint';
 import WantedUpsertDomain from '../app.domains/wanted.upsert.domain';
-import DataStore from '../app.infras/datastores/datastore';
-import { InitDataStore } from '../app.infras/datastores/datastore.decorators/datastore.decorators';
 import { TrWanted } from '../app.entities/tr.wanted';
+import AppDomain from '../app.domains/app.domain';
+import AccessorConfig from '../app.infras/datastores/datastore.mysql.accessors/accessor.mysql.config';
 
-@UseDataStore
+//@UseDataStore
 export default class WantedsUpsertEndpoint extends Endpoint {
 
     /** コンストラクタ */
@@ -14,32 +14,58 @@ export default class WantedsUpsertEndpoint extends Endpoint {
 
     /** リクエストパラメータを抽出 */
     /* override */ 
-    GetParams (dto: any): { whois: string, wanted: TrWanted } {
+    GetParams (
+        dto: any
+    ): {
+        whois: string,
+        wanted: TrWanted
+    } {
         return {
             whois: dto.whois,
-            wanted: dto.wanteds[0]
+            wanted: dto.wanted
         };
     }
 
     /** メイン処理 */
     /* override */ 
-    @InitDataStore(/*[TrWanted]*/)
-    async MainMethod (dataStore: DataStore, params: { whois: string, wanted: TrWanted }): Promise<{ wanteds: TrWanted[] }> {
+    //@InitDataStore(/*[TrWanted]*/)
+    async MainMethod (
+        //dataStore: DataStore,
+        params: {
+            whois: string,
+            wanted: TrWanted
+        }
+    ): Promise<{
+        wanted: TrWanted
+    }> {
 
-        params.wanted.whois = params.whois;
-        const domain = new WantedUpsertDomain(dataStore);
-        const result = await dataStore.RunWithTransaction(async (result: { wanteds: TrWanted[] }) => {
+        console.log("Create wanted(1)");
 
-            const isNew = domain.IsNew(params.wanted);
+        const appDomain = new AppDomain();
+        const result = await appDomain.RunWithTran(
+            AccessorConfig.GetConfig([TrWanted]),
+            async (entityManager) => {
 
-            const specifyKeys = isNew
-                ? await domain.Insert(params.wanted)
-                : await domain.Upsert(params.wanted);
-            const domResult = await domain.Fetch(specifyKeys.whois, specifyKeys.uuid, specifyKeys.revision);
+                console.log("Create wanted(2)");
+                const domain = new WantedUpsertDomain(entityManager);
 
-            result.wanteds = [domResult.wanted]; // 詰め替えなくてもいいけど、お作法でやってるだけｗ
-            return result;
-        });
+                console.log("Create wanted(3)");
+                const isNew = domain.IsNew(params.wanted);
+
+                console.log("Create wanted(4)");
+                
+                const specifyKeys = isNew
+                    ? await domain.Insert(params.wanted)
+                    : await domain.Update(params.wanted);
+                const resultEntity = await domain.Fetch(
+                                                    specifyKeys.whois,
+                                                    specifyKeys.uuid,
+                                                    specifyKeys.revision);
+                console.log("Create wanted(5)");
+                return resultEntity;
+            });
+
+        console.log("Create wanted(6)");
         return result;
     }
 
@@ -48,7 +74,7 @@ export default class WantedsUpsertEndpoint extends Endpoint {
     async OnSuccess (result: any) {
         this._Response.send(JSON.stringify({
             success: true,
-            wanteds: result.wanteds
+            wanted: result.wanted
         }));
     }
 

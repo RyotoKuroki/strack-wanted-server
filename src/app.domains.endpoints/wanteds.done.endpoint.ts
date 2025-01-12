@@ -1,10 +1,10 @@
 import Endpoint, { UseDataStore } from './Endpoint';
 import WantedDoneDomain from '../app.domains/wanted.done.domain';
-import DataStore from '../app.infras/datastores/datastore';
-import { InitDataStore } from '../app.infras/datastores/datastore.decorators/datastore.decorators';
 import { TrWanted } from '../app.entities/tr.wanted';
+import AppDomain from '../app.domains/app.domain';
+import AccessorConfig from '../app.infras/datastores/datastore.mysql.accessors/accessor.mysql.config';
 
-@UseDataStore
+//@UseDataStore
 export default class WantedsDoneEndpoint extends Endpoint {
 
     /** コンストラクタ */
@@ -14,28 +14,56 @@ export default class WantedsDoneEndpoint extends Endpoint {
 
     /** リクエストパラメータを抽出 */
     /* override */ 
-    GetParams (dto: { whois: string, wanteds: TrWanted[] }): { whois: string, wanted: TrWanted } {
+    GetParams (
+        dto: {
+            whois: string,
+            wanted: TrWanted
+        }
+    ): {
+        whois: string,
+        wanted: TrWanted
+    } {
+    
         return {
             whois: dto.whois,
-            wanted: dto.wanteds[0]
+            wanted: dto.wanted
         };
     }
 
     /** メイン処理 */
     /* override */ 
-    @InitDataStore(/*[TrWanted]*/)
-    async MainMethod (dataStore: DataStore, params: { whois: string, wanted: TrWanted }): Promise<{ wanteds: TrWanted[] }> {
+    //@InitDataStore(/*[TrWanted]*/)
+    async MainMethod (
+        //dataStore: DataStore,
+        params: {
+            whois: string,
+            wanted: TrWanted
+        }
+    ): Promise<{
+        wanted: TrWanted
+    }> {
 
-        params.wanted.whois = params.whois;
-        const domain = new WantedDoneDomain(dataStore);
-        const result = await dataStore.RunWithTransaction(async (result: { wanteds: TrWanted[] }) => {
+        const appDomain = new AppDomain();
+        const result = await appDomain.RunWithTran(
+            AccessorConfig.GetConfig([TrWanted]),
+            async (entityManager) => {
 
-            const specifyKeys = await domain.Done(params.wanted);
-            const domResult = await domain.Fetch(specifyKeys.whois, specifyKeys.uuid, specifyKeys.revision);
-            
-            result.wanteds = [domResult.wanted]; // 詰め替えなくてもいいけど、お作法でやってるだけｗ
-            return result;
-        });
+                console.log("Done wanted(1)");
+                const domain = new WantedDoneDomain(entityManager);
+
+                console.log("Done wanted(2)");
+                const resultUpsert = await domain.Done(params.wanted);
+
+                console.log("Done wanted(3)");
+                const resultEntity = await domain.Fetch(
+                                                    resultUpsert.whois,
+                                                    resultUpsert.uuid,
+                                                    resultUpsert.revision);
+
+                console.log("Done wanted(4)");
+                return resultEntity;
+            });
+
        return result;
     }
 
@@ -44,7 +72,7 @@ export default class WantedsDoneEndpoint extends Endpoint {
     async OnSuccess (result: any) {
         this._Response.send(JSON.stringify({
             success: true,
-            wanteds: result.wanteds
+            wanted: result.wanted
         }));
     }
 

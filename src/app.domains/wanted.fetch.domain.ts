@@ -1,5 +1,5 @@
+import { EntityManager } from "typeorm";
 import { TrWanted } from "../app.entities/tr.wanted";
-import DataStore from "../app.infras/datastores/datastore";
 import { KvpMap } from "../app.utils/KvpMap";
 
 export default class WantedFetchDomain {
@@ -12,32 +12,48 @@ export default class WantedFetchDomain {
     protected FIELD_REVISION = 'revision';
     protected FIELD_ENABLED = 'enabled';
 
-    protected _DataStore: DataStore;
-    constructor (dataStore: DataStore) {
-        this._DataStore = dataStore;
+    protected EntityManager!: EntityManager;
+    constructor (entityManager: EntityManager) {
+        this.EntityManager = entityManager;
     }
 
-    public async Fetch (whois: string, enabled: string): Promise<{ wanteds: TrWanted[] }> {
+    public async Fetch (
+        whois: string,
+        enabled: string
+    ): Promise<{
+        wanteds: TrWanted[]
+    }> {
 
         // ■抽出条件
         const condition = new KvpMap()
         .Add2Map(this.FIELD_WHOIS, whois)
         .Add2Map(this.FIELD_ENABLED, enabled)
         .Map;
-        const wanteds = await TrWanted.InTran_Fetch(this._DataStore, condition);
-        return { wanteds: wanteds };
+
+        const repo = this.EntityManager.getRepository(TrWanted);
+        const wanteds = await repo.find(condition);
+        return { wanteds: wanteds! };
     }
 
-    public async FetchOne (whois: string, uuid: string, revision: number, enabled: string): Promise<{ wanted: TrWanted | undefined }> {
-        
+    public async FetchOne (
+        whois: string,
+        uuid: string,
+        revision: number
+    ): Promise<{
+        wanted: TrWanted | null
+    }> {
         // ■抽出条件
-        const map = new KvpMap()
+        const condition = new KvpMap()
         .Add2Map(this.FIELD_WHOIS, whois)
         .Add2Map(this.FIELD_UUID, uuid)
         .Add2Map(this.FIELD_REVISION, revision)
-        .Add2Map(this.FIELD_ENABLED, enabled)
+        //.Add2Map(this.FIELD_ENABLED, enabled)
         .Map;
-        const wanteds = await TrWanted.InTran_Fetch(this._DataStore, map);
-        return wanteds.length > 0 ? { wanted: wanteds[0] } : { wanted: undefined };
+        
+        const repo = this.EntityManager.getRepository(TrWanted);
+        const wanted = await repo.findOne({
+            where: condition,
+        });
+        return { wanted: wanted! };
     }
 }

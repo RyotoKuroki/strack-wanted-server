@@ -1,7 +1,7 @@
 import { TrWanted } from '../app.entities/tr.wanted';
-import DataStore from "../app.infras/datastores/datastore";
 import { EntityEnableStates } from 'strack-wanted-meta/dist/consts/states/states.entity.enabled';
 import { KvpMap } from '../app.utils/KvpMap';
+import { EntityManager } from 'typeorm';
 
 export default class WantedDeleteDomain {
 
@@ -13,45 +13,62 @@ export default class WantedDeleteDomain {
     protected FIELD_REVISION = 'revision';
     protected FIELD_ENABLED = 'enabled';
 
-    protected _DataStore: DataStore;
-    constructor (dataStore: DataStore) {
-        this._DataStore = dataStore;
+    protected EntityManager!: EntityManager;
+    constructor (entityManager: EntityManager) {
+        this.EntityManager = entityManager;
     }
 
-    public async Remove (wanted: TrWanted): Promise<{ whois: string, uuid: string, revision: number }> {
-
+    public async Remove (
+        wanted: TrWanted
+    ): Promise<{
+        whois: string,
+        uuid: string,
+        revision: number,
+        enabled: string,
+    }> {
         const rev = Number(wanted.revision);
+        const nextRev = TrWanted.GetNextRev(rev);
 
-        // ■削除時の抽出条件
-        const condition = new KvpMap()
-        .Add2Map(this.FIELD_WHOIS, wanted.whois)
-        .Add2Map(this.FIELD_UUID, wanted.uuid)
-        .Add2Map(this.FIELD_REVISION, rev)
-        .Map;
-        // ■削除（更新）時の設定値
-        const value = new KvpMap()
-        .Add2Map(this.FIELD_REVISION, TrWanted.GetNextRev(rev))
-        .Add2Map(this.FIELD_ENABLED, EntityEnableStates.DISABLE)
-        .Map;
-        const affectedRows = await TrWanted.InTran_Update(this._DataStore, value, condition);
-        this._DataStore.ThrowErrorNotExpectedAffectedRowsCount(affectedRows, 1);
-
+        await TrWanted.Update(
+            this.EntityManager,
+            {
+                revision    : nextRev,
+                enabled     : EntityEnableStates.DISABLE,
+            },
+            {
+                whois   : wanted.whois,
+                uuid    : wanted.uuid,
+                revision: rev,
+            });
+        
         return {
-            whois: wanted.whois,
-            uuid: wanted.uuid,
-            revision: value.revision, // next-value
+            whois   : wanted.whois,
+            uuid    : wanted.uuid,
+            revision: nextRev,
+            enabled : EntityEnableStates.DISABLE,
         };
     }
     
-    public async Fetch (whois: string, uuid: string, revision: number): Promise<{ wanted: TrWanted }> {
-
-        const map = new KvpMap()
+    public async Fetch (
+        whois: string,
+        uuid: string,
+        revision: number,
+        enabled: string
+    ): Promise<{
+        wanted: TrWanted
+    }> {
+        // ■抽出条件
+        const condition = new KvpMap()
         .Add2Map(this.FIELD_WHOIS, whois)
         .Add2Map(this.FIELD_UUID, uuid)
-        .Add2Map(this.FIELD_REVISION, Number(revision))
+        .Add2Map(this.FIELD_REVISION, revision)
+        .Add2Map(this.FIELD_ENABLED, enabled)
         .Map;
-
-        const wanteds = await TrWanted.InTran_Fetch(this._DataStore, map);
-        return { wanted: wanteds[0] };
+        
+        const repo = this.EntityManager.getRepository(TrWanted);
+        const wanted = await repo.findOne({
+            where: condition,
+        });
+        return { wanted: wanted! };
     }
 }
